@@ -17,3 +17,4 @@ class Project(models.Model) :
     Dogovor = models.ForeignKey(Dogovor, on_delete=models.PROTECT, related_name='dogovors', verbose_name='Договор', blank=True)
     project_type = models.ForeignKey(Project_type, on_delete=models.PROTECT, related_name='project_types', verbose_name='Тип', blank=True)
     is_long = models.BooleanField(verbose_name='Длительный')
+    archives = models.ManyToManyField(Archives, on_delete=models.PROTECT, related_name='archives', verbose_name='Архив', blank=True)
