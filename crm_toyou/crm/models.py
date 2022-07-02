@@ -27,11 +27,12 @@ class Custumer(models.Model):
     surname = models.CharField(max_length=150, verbose_name='Отчество', blank=True)
     last_name = models.CharField(max_length=150, verbose_name='Фамилия', blank=True)
     slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
-    birth = models.DateField(verbose_name='Дата рождения', blank=True)
+    birth = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Добавлен')
     custumer_phone = models.CharField(max_length=20, verbose_name='Телефон', blank=True)
     custumer_email = models.EmailField(verbose_name='E-mail', blank=True)
-    type_call = models.ForeignKey(Type_call, on_delete=models.PROTECT, related_name='custumers', verbose_name='Тип связи', blank=True)
+    type_call = models.ForeignKey(Type_call, on_delete=models.PROTECT, related_name='custumers',
+                                  verbose_name='Тип связи', null=True, blank=True)
     custumer_photo = models.ImageField(upload_to='photos/catalog/%Y/%m/%d/', verbose_name='Фото', blank=True)
     custumer_position = models.CharField(max_length=150, verbose_name='Должность', blank=True)
     custumer_adress = models.CharField(max_length=150, verbose_name='Адрес', blank=True)
@@ -39,11 +40,11 @@ class Custumer(models.Model):
     phisic_person = models.BooleanField(verbose_name='Физическое лицо')
 
     def __str__(self):
-        return self.title
+        return self.last_name
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Заказчик"
+        verbose_name = "Заказчика"
         verbose_name_plural = "Заказчики"
 
 class Project(models.Model):
@@ -52,12 +53,14 @@ class Project(models.Model):
     project_description = models.TextField(verbose_name='Описание', blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
     project_photo = models.ImageField(upload_to='photos/catalog/%Y/%m/%d/', verbose_name='Фото', blank=True)
-    start_project = models.DateField(verbose_name='Начало', blank=True)
-    project_deadline = models.DateField(verbose_name='Дедлайн', blank=True)
-    custumer = models.ForeignKey(Custumer, on_delete=models.PROTECT, related_name='projects', verbose_name='Заказчик', blank=True)
+    start_project = models.DateField(verbose_name='Начало', null=True, blank=True)
+    project_deadline = models.DateField(verbose_name='Дедлайн', null=True, blank=True)
+    custumer = models.ForeignKey(Custumer, on_delete=models.PROTECT, related_name='projects', verbose_name='Заказчик',
+                                 null=True, blank=True)
     in_charge = models.CharField(max_length=150, verbose_name='Представитель Заказчика', blank=True)
     in_charge_phone = models.CharField(max_length=150, verbose_name='Телефон представителя', blank=True)
-    status_project = models.ForeignKey(Status_project, on_delete=models.PROTECT, related_name='projects', verbose_name='Статус')
+    status_project = models.ForeignKey(Status_project, on_delete=models.PROTECT, related_name='projects',
+                                       verbose_name='Статус')
     is_long = models.BooleanField(verbose_name='Длительный')
 
     def __str__(self):
