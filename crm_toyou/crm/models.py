@@ -59,6 +59,25 @@ class DocumentStatus(models.Model):
         verbose_name = "Статус документа"
         verbose_name_plural = "Статусы документов"
 
+class Dogovor(models.Model):
+    dogovor_title = models.CharField(max_length=150, verbose_name='Название', blank=True)
+    dogovor_number = models.CharField(max_length=150, verbose_name='Номер Договора', blank=True)
+    dogovor_date = models.DateField(verbose_name='Дата Договора', null=True, blank=True)
+    dogovor_file = models.FileField(upload_to='docs/dogovors/', verbose_name='Файл', null=True, blank=True)
+    dogovor_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость', blank=True)
+    document_status = models.ForeignKey(DocumentStatus, on_delete=models.PROTECT, related_name='projects',
+                                        verbose_name='Статус', null=True, blank=True)
+    custumer = models.ForeignKey(to=Custumer, on_delete=models.PROTECT, related_name='dogovor_custumer',
+                                 verbose_name='Заказчик', null=True, blank=True)
+
+    def __str__(self):
+        return self.dogovor_title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Договор"
+        verbose_name_plural = "Договоры"
+
 
 class DogovorTask(models.Model):
     dogovor_task_title = models.CharField(max_length=150, verbose_name='Название Задания', blank=True)
@@ -68,6 +87,8 @@ class DogovorTask(models.Model):
     task_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Сумма', blank=True)
     document_status = models.ForeignKey(DocumentStatus, on_delete=models.PROTECT, related_name='dogovor_tasks',
                                         verbose_name='Статус', null=True, blank=True)
+    dogovor = models.ForeignKey(to=Dogovor, on_delete=models.PROTECT, related_name='dogovor_tasks',
+                                verbose_name='Договор', null=True, blank=True)
 
     def __str__(self):
         return self.dogovor_task_title
@@ -86,6 +107,8 @@ class Schet(models.Model):
     schet_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Сумма', blank=True)
     document_status = models.ForeignKey(DocumentStatus, on_delete=models.PROTECT, related_name='dogovor_schets',
                                         verbose_name='Статус', null=True, blank=True)
+    dogovor = models.ForeignKey(to=Dogovor, on_delete=models.PROTECT, related_name='dogovor_schets',
+                                verbose_name='Договор', null=True, blank=True)
 
     def __str__(self):
         return self.schet_title
@@ -104,6 +127,8 @@ class Akt(models.Model):
     akt_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Сумма', blank=True)
     document_status = models.ForeignKey(DocumentStatus, on_delete=models.PROTECT, related_name='dogovor_akts',
                                         verbose_name='Статус', null=True, blank=True)
+    dogovor = models.ForeignKey(to=Dogovor, on_delete=models.PROTECT, related_name='dogovor_acts',
+                                verbose_name='Договор', null=True, blank=True)
 
     def __str__(self):
         return self.akt_title
@@ -112,30 +137,6 @@ class Akt(models.Model):
         ordering = ['id']
         verbose_name = "Акт"
         verbose_name_plural = "Акты"
-
-
-class Dogovor(models.Model):
-    dogovor_title = models.CharField(max_length=150, verbose_name='Название', blank=True)
-    dogovor_number = models.CharField(max_length=150, verbose_name='Номер Договора', blank=True)
-    dogovor_date = models.DateField(verbose_name='Дата Договора', null=True, blank=True)
-    dogovor_file = models.FileField(upload_to='docs/dogovors/', verbose_name='Файл', null=True, blank=True)
-    dogovor_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость', blank=True)
-    document_status = models.ForeignKey(DocumentStatus, on_delete=models.PROTECT, related_name='projects',
-                                        verbose_name='Статус', null=True, blank=True)
-    dogovor_task = models.ForeignKey(DogovorTask, on_delete=models.PROTECT, related_name='projects',
-                                     verbose_name='Задание', null=True, blank=True)
-    schet = models.ForeignKey(Schet, on_delete=models.PROTECT, related_name='projects', verbose_name='Счет', null=True,
-                              blank=True)
-    akt = models.ForeignKey(Akt, on_delete=models.PROTECT, related_name='projects', verbose_name='Акт', null=True,
-                            blank=True)
-
-    def __str__(self):
-        return self.dogovor_title
-
-    class Meta:
-        ordering = ['id']
-        verbose_name = "Договор"
-        verbose_name_plural = "Договоры"
 
 
 class Project(models.Model):

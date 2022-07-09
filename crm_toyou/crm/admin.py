@@ -21,6 +21,7 @@ class DogovorTaskAdmin(admin.ModelAdmin):
     list_display = ('dogovor_task_title', 'task_number', 'task_date', 'task_price', 'document_status')
     list_display_links = ('dogovor_task_title', 'task_number')
     search_fields = ['dogovor_task_title', 'task_number']
+    list_filter = ('dogovor',)
 
 
 class SchetAdmin(admin.ModelAdmin):
@@ -28,6 +29,7 @@ class SchetAdmin(admin.ModelAdmin):
     list_display = ('schet_title', 'schet_number', 'schet_date', 'schet_price', 'document_status')
     list_display_links = ('schet_title', 'schet_number')
     search_fields = ['schet_title', 'schet_number']
+    list_filter = ('dogovor',)
 
 
 class AktAdmin(admin.ModelAdmin):
@@ -35,6 +37,7 @@ class AktAdmin(admin.ModelAdmin):
     list_display = ('akt_title', 'akt_number', 'akt_date', 'akt_price', 'document_status')
     list_display_links = ('akt_title', 'akt_number')
     search_fields = ['akt_title', 'akt_number']
+    list_filter = ('dogovor',)
 
 
 class DogovorAdmin(admin.ModelAdmin):
@@ -42,6 +45,7 @@ class DogovorAdmin(admin.ModelAdmin):
     list_display = ('dogovor_title', 'dogovor_number', 'dogovor_date', 'dogovor_price', 'document_status')
     list_display_links = ('dogovor_title', 'dogovor_number')
     search_fields = ['dogovor_title', 'dogovor_number']
+    list_filter = ('custumer',)
 
 
 class CustumerAdmin(admin.ModelAdmin):
