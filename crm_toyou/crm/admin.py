@@ -12,6 +12,38 @@ class Type_callAdmin(admin.ModelAdmin):
     list_display = ('id', 'title')
 
 
+class DocumentStatusAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
+
+
+class DogovorTaskAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = ('dogovor_task_title', 'task_number', 'task_date', 'task_price', 'document_status')
+    list_display_links = ('dogovor_task_title', 'task_number')
+    search_fields = ['dogovor_task_title', 'task_number']
+
+
+class SchetAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = ('schet_title', 'schet_number', 'schet_date', 'schet_price', 'document_status')
+    list_display_links = ('schet_title', 'schet_number')
+    search_fields = ['schet_title', 'schet_number']
+
+
+class AktAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = ('akt_title', 'akt_number', 'akt_date', 'akt_price', 'document_status')
+    list_display_links = ('akt_title', 'akt_number')
+    search_fields = ['akt_title', 'akt_number']
+
+
+class DogovorAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = ('dogovor_title', 'dogovor_number', 'dogovor_date', 'dogovor_price', 'document_status')
+    list_display_links = ('dogovor_title', 'dogovor_number')
+    search_fields = ['dogovor_title', 'dogovor_number']
+
+
 class CustumerAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = ('id', 'name', 'last_name', 'get_photo', 'custumer_phone', 'custumer_email', 'type_call')
@@ -44,5 +76,10 @@ class ProjectAdmin(admin.ModelAdmin):
 
 admin.site.register(Status_project, Status_projectAdmin)
 admin.site.register(Type_call, Type_callAdmin)
+admin.site.register(DocumentStatus, DocumentStatusAdmin)
+admin.site.register(DogovorTask, DogovorTaskAdmin)
+admin.site.register(Schet, SchetAdmin)
+admin.site.register(Akt, AktAdmin)
+admin.site.register(Dogovor, DogovorAdmin)
 admin.site.register(Custumer, CustumerAdmin)
 admin.site.register(Project, ProjectAdmin)
