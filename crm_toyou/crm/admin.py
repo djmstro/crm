@@ -47,6 +47,20 @@ class DogovorAdmin(admin.ModelAdmin):
     search_fields = ['dogovor_title', 'dogovor_number']
     list_filter = ('custumer',)
 
+class CompanyAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = ('id', 'short_name', 'company_email', 'inn', 'kpp', 'director', 'get_logo')
+    list_display_links = ('id', 'short_name')
+    search_fields = ['short_name']
+    readonly_fields = ['created_at']
+    prepopulated_fields = {"slug": ("short_name",)}
+
+    def get_logo(self, obj):
+        if obj.company_logo:
+            return mark_safe(f'<img src="{obj.company_logo.url}" width="120">')
+        return '-'
+
+    get_logo.short_description = 'Логотип'
 
 class CustumerAdmin(admin.ModelAdmin):
     save_on_top = True
@@ -54,6 +68,8 @@ class CustumerAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'name', 'last_name', 'get_photo')
     search_fields = ['name', 'last_name', 'custumer_phone', 'custumer_email']
     readonly_fields = ('created_at', 'get_photo')
+    list_filter = ('company',)
+    prepopulated_fields = {"slug": ("surname",)}
 
     def get_photo(self, obj):
         if obj.custumer_photo:
@@ -71,6 +87,7 @@ class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['title']
     list_filter = ('custumer',)
     readonly_fields = ('created_at', 'get_photo')
+    prepopulated_fields = {"slug": ("title",)}
 
     def get_photo(self, obj):
         if obj.project_photo:
@@ -80,6 +97,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 admin.site.register(Status_project, Status_projectAdmin)
 admin.site.register(Type_call, Type_callAdmin)
+admin.site.register(Company, CompanyAdmin)
 admin.site.register(DocumentStatus, DocumentStatusAdmin)
 admin.site.register(DogovorTask, DogovorTaskAdmin)
 admin.site.register(Schet, SchetAdmin)

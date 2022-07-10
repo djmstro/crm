@@ -11,7 +11,7 @@ class Status_project(models.Model) :
         verbose_name = "Статус проекта"
         verbose_name_plural = "Статусы проектов"
 
-class Type_call(models.Model) :
+class Type_call(models.Model):
     title = models.CharField(max_length=100, verbose_name='Тип связи')
 
     def __str__(self):
@@ -21,6 +21,36 @@ class Type_call(models.Model) :
         ordering = ['id']
         verbose_name = "Тип связи с Заказчиком"
         verbose_name_plural = "Типы связи с Заказчиком"
+
+
+class Company(models.Model):
+    name = models.CharField(max_length=150, verbose_name='Название', blank=True)
+    short_name = models.CharField(max_length=150, verbose_name='Короткое название', blank=True)
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+    company_adress = models.TextField(verbose_name='Адрес', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Добавлена')
+    company_phone_number = models.CharField(max_length=150, verbose_name='Телефон', blank=True)
+    company_email = models.EmailField(verbose_name='Email', blank=True)
+    inn = models.IntegerField(verbose_name='ИНН', blank=True)
+    kpp = models.IntegerField(verbose_name='КПП', blank=True)
+    ogrn = models.IntegerField(verbose_name='ОГРН', blank=True)
+    rs = models.IntegerField(verbose_name='Расчетный счет', blank=True)
+    bank_name = models.CharField(max_length=150, verbose_name='Банк', blank=True)
+    korr_schet = models.IntegerField(verbose_name='Корреспондентский счет', blank=True)
+    bik = models.IntegerField(verbose_name='БИК', blank=True)
+    director = models.CharField(max_length=150, verbose_name='Директор')
+    director_main = models.TextField(verbose_name='На основании', blank=True)
+    company_logo = models.ImageField(upload_to='companies_logo/', verbose_name='Логотип', null=True, blank=True)
+    comment = models.TextField(verbose_name='Комментарий', blank=True)
+
+    def __str__(self):
+        return self.short_name
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Компанию"
+        verbose_name_plural = "Компании"
+
 
 class Custumer(models.Model):
     name = models.CharField(max_length=150, verbose_name='Имя', blank=True)
@@ -33,10 +63,12 @@ class Custumer(models.Model):
     custumer_email = models.EmailField(verbose_name='E-mail', blank=True)
     type_call = models.ForeignKey(Type_call, on_delete=models.PROTECT, related_name='custumers',
                                   verbose_name='Тип связи', null=True, blank=True)
-    custumer_photo = models.ImageField(upload_to='photos/catalog/%Y/%m/%d/', verbose_name='Фото', blank=True)
+    custumer_photo = models.ImageField(upload_to='photos/catalog/%Y/%m/%d/', verbose_name='Фото', null=True, blank=True)
     custumer_position = models.CharField(max_length=150, verbose_name='Должность', blank=True)
     custumer_adress = models.CharField(max_length=150, verbose_name='Адрес', blank=True)
     custumer_comment = models.TextField(verbose_name='Комментарий', blank=True)
+    company = models.ForeignKey(to=Company, on_delete=models.PROTECT, related_name='custumer_company',
+                                verbose_name='Компания', null=True, blank=True)
     phisic_person = models.BooleanField(verbose_name='Физическое лицо')
 
     def __str__(self):
