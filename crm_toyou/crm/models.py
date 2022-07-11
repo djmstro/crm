@@ -1,6 +1,7 @@
 from django.db import models
 
-class Status_project(models.Model) :
+
+class Status_project(models.Model):
     title = models.CharField(max_length=100, verbose_name='Статус')
 
     def __str__(self):
@@ -10,6 +11,7 @@ class Status_project(models.Model) :
         ordering = ['id']
         verbose_name = "Статус проекта"
         verbose_name_plural = "Статусы проектов"
+
 
 class Type_call(models.Model):
     title = models.CharField(max_length=100, verbose_name='Тип связи')
@@ -90,6 +92,7 @@ class DocumentStatus(models.Model):
         ordering = ['id']
         verbose_name = "Статус документа"
         verbose_name_plural = "Статусы документов"
+
 
 class Dogovor(models.Model):
     dogovor_title = models.CharField(max_length=150, verbose_name='Название', blank=True)
@@ -196,5 +199,120 @@ class Project(models.Model):
         verbose_name = "Проект"
         verbose_name_plural = "Проекты"
 
-    # archives = models.ManyToManyField(Archives, on_delete=models.PROTECT, related_name='archives', verbose_name='Архив', blank=True)
-    # tasks = models.ForeignKey(Tasks, on_delete=models.PROTECT, related_name='projects', verbose_name='Задачи', blank=True)
+
+class ProjectTaskStatus(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Статус задачи')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Статус задачи"
+        verbose_name_plural = "Статусы задач"
+
+
+class TaskType(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Тип задачи')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Тип задачи"
+        verbose_name_plural = "Типы задач"
+
+
+class Parking(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Тип парковки')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Тип парковки"
+        verbose_name_plural = "Типы парковок"
+
+
+class ServiceCategory(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Название')
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+    service_category_description = models.TextField(verbose_name='Описание', blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Категория услуги"
+        verbose_name_plural = "Категории услуг"
+
+
+class TypeOfExecutor(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Должность')
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Сотрудник"
+        verbose_name_plural = "Сотрудники"
+
+
+class Services(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Название')
+    type_of_executor = models.ForeignKey(TypeOfExecutor, on_delete=models.PROTECT, related_name='service_type_executor',
+                                         verbose_name='Сотрудник', null=True, blank=True)
+    service_description = models.TextField(verbose_name='Описание', blank=True)
+    service_comment = models.CharField(max_length=100, verbose_name='Комментарий', blank=True)
+    service_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость для клиента',
+                                        blank=True)
+    service_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Себестоимость',
+                                       blank=True)
+    must_count = models.IntegerField(default=1, verbose_name='Кол-во')
+    service_category = models.ForeignKey(ServiceCategory, on_delete=models.PROTECT, related_name='service_cat',
+                                         verbose_name='Категория', null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Услугу"
+        verbose_name_plural = "Услуги"
+
+
+class Task(models.Model):
+    project_task_title = models.CharField(max_length=150, verbose_name='Название')
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+    location = models.CharField(max_length=150, verbose_name='Локация', blank=True)
+    services = models.ManyToManyField(Services, related_name='tasks_services', verbose_name='Услуги', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создана')
+    # executor = models.ManyToManyField(Executor, related_name='tasks_executor', verbose_name='Исполнители', blank=True)
+    # equipment = models.ManyToManyField(Equipment, related_name='tasks_equipment', verbose_name='Оборудование', blank=True)
+    # archives = models.ManyToManyField(Archives, related_name='tasks_archives', verbose_name='Архив', blank=True)
+    task_start_date = models.DateField(verbose_name='Начало', null=True, blank=True)
+    task_deadline = models.DateField(verbose_name='Дедлайн', null=True, blank=True)
+    project_task_status = models.ForeignKey(ProjectTaskStatus, on_delete=models.PROTECT,
+                                            related_name='project_task_status', verbose_name='Статус задачи', null=True,
+                                            blank=True)
+    project = models.ForeignKey(to=Project, on_delete=models.PROTECT, related_name='project', verbose_name='Проект',
+                                null=True, blank=True)
+    task_type = models.ForeignKey(TaskType, on_delete=models.PROTECT, related_name='task_type',
+                                  verbose_name='Тип задачи', null=True, blank=True)
+    parking = models.ForeignKey(Parking, on_delete=models.PROTECT, related_name='task_parking',
+                                verbose_name='Тип парковки', null=True, blank=True)
+    final_clip_Vimeo = models.URLField(verbose_name='Финальное видео Vimeo', blank=True)
+    final_clip_yandex = models.URLField(verbose_name='Финальное видео ЯД', blank=True)
+
+    def __str__(self):
+        return self.project_task_title
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Задачу"
+        verbose_name_plural = "Задачи"

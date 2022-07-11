@@ -47,6 +47,7 @@ class DogovorAdmin(admin.ModelAdmin):
     search_fields = ['dogovor_title', 'dogovor_number']
     list_filter = ('custumer',)
 
+
 class CompanyAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = ('id', 'short_name', 'company_email', 'inn', 'kpp', 'director', 'get_logo')
@@ -61,6 +62,7 @@ class CompanyAdmin(admin.ModelAdmin):
         return '-'
 
     get_logo.short_description = 'Логотип'
+
 
 class CustumerAdmin(admin.ModelAdmin):
     save_on_top = True
@@ -82,7 +84,7 @@ class CustumerAdmin(admin.ModelAdmin):
 class ProjectAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-    'id', 'title', 'custumer', 'project_deadline', 'get_photo', 'created_at', 'start_project', 'status_project')
+        'id', 'title', 'custumer', 'project_deadline', 'get_photo', 'created_at', 'start_project', 'status_project')
     list_display_links = ('id', 'title', 'custumer', 'get_photo')
     search_fields = ['title']
     list_filter = ('custumer',)
@@ -95,6 +97,51 @@ class ProjectAdmin(admin.ModelAdmin):
         return '-'
 
 
+class ProjectTaskStatusAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
+
+
+class TaskTypeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
+
+
+class ParkingAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
+
+
+class ServiceCategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
+    list_display_links = ('id', 'title')
+    search_fields = ['title']
+    prepopulated_fields = {"slug": ("title",)}
+
+
+class ServicesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'service_comment', 'must_count', 'service_price', 'service_cost')
+    list_display_links = ('id', 'title')
+    search_fields = ['title']
+    list_filter = ('service_category', 'type_of_executor',)
+
+
+class TypeOfExecutorAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
+    list_display_links = ('id', 'title')
+    search_fields = ['title']
+    prepopulated_fields = {"slug": ("title",)}
+
+
+class TaskAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+    'id', 'project_task_title', 'created_at', 'task_start_date', 'task_deadline', 'project_task_status', 'task_type',
+    'final_clip_Vimeo')
+    list_display_links = ('id', 'project_task_title')
+    search_fields = ['project_task_title']
+    list_filter = ('project',)
+    readonly_fields = ['created_at']
+    prepopulated_fields = {"slug": ("project_task_title",)}
+
+
 admin.site.register(Status_project, Status_projectAdmin)
 admin.site.register(Type_call, Type_callAdmin)
 admin.site.register(Company, CompanyAdmin)
@@ -105,3 +152,10 @@ admin.site.register(Akt, AktAdmin)
 admin.site.register(Dogovor, DogovorAdmin)
 admin.site.register(Custumer, CustumerAdmin)
 admin.site.register(Project, ProjectAdmin)
+admin.site.register(ProjectTaskStatus, ProjectTaskStatusAdmin)
+admin.site.register(TaskType, TaskTypeAdmin)
+admin.site.register(Parking, ParkingAdmin)
+admin.site.register(ServiceCategory, ServiceCategoryAdmin)
+admin.site.register(TypeOfExecutor, TypeOfExecutorAdmin)
+admin.site.register(Services, ServicesAdmin)
+admin.site.register(Task, TaskAdmin)
