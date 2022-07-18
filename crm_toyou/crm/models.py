@@ -286,15 +286,112 @@ class Services(models.Model):
         verbose_name_plural = "Услуги"
 
 
+class Department(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Название отдела')
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Отдел"
+        verbose_name_plural = "Отделы"
+
+
+class Executor(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Имя', blank=True)
+    surname = models.CharField(max_length=100, verbose_name='Отчество', blank=True)
+    last_name = models.CharField(max_length=100, verbose_name='Фамилия', blank=True)
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    department = models.ManyToManyField(Department, related_name='executor_department', verbose_name='Отдел',
+                                        blank=True)
+    birth = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
+    phone_number = models.CharField(max_length=100, verbose_name='Телефон', blank=True)
+    executor_email = models.EmailField(verbose_name='E-mail', blank=True)
+    office = models.BooleanField(verbose_name='Офисный сотрудник')
+    executor_photo = models.ImageField(upload_to='executor_photo/', verbose_name='Фото', null=True, blank=True)
+    passport_s = models.IntegerField(default=0, verbose_name='Серия паспорта')
+    passport_n = models.IntegerField(default=0, verbose_name='Номер паспорта')
+    birth_location = models.TextField(verbose_name='Место рождения')
+    adress_date = models.DateField(verbose_name='Дата регистрации', null=True, blank=True)
+    adress = models.TextField(verbose_name='Прописка')
+    vydan = models.TextField(verbose_name='Выдан')
+    data_vydachi = models.DateField(verbose_name='Дата выдачи', null=True, blank=True)
+    kod_podrazdelenia = models.IntegerField(default=0, verbose_name='Код подразделения')
+    driving_license = models.BooleanField(verbose_name='Наличие прав')
+    executor_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Себестоимость/час,₽',
+                                        blank=True)
+
+    def __str__(self):
+        return self.last_name
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Исполнителя"
+        verbose_name_plural = "Исполнители"
+
+
+class Car(models.Model):
+    brand = models.CharField(max_length=100, verbose_name='Марка', blank=True)
+    model = models.CharField(max_length=100, verbose_name='Модель', blank=True)
+    number = models.CharField(max_length=100, verbose_name='Регистрационный номер', blank=True)
+    color = models.CharField(max_length=100, verbose_name='Цвет авто', blank=True)
+    executor = models.ForeignKey(to=Executor, on_delete=models.PROTECT, related_name='car_executor',
+                                 verbose_name='Исполнитель', null=True, blank=True)
+
+    def __str__(self):
+        return self.model
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Автомобиль"
+        verbose_name_plural = "Автомобили"
+
+
+class Archives(models.Model):
+    archives_title = models.CharField(max_length=100, verbose_name='Название архива')
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    full_size = models.IntegerField(default=2000, verbose_name='Размер диска,МБ', blank=True)
+    sn = models.CharField(max_length=100, verbose_name='Серийный номер', blank=True)
+
+    def __str__(self):
+        return self.archives_title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Архив"
+        verbose_name_plural = "Архивы"
+
+
+class FilePath(models.Model):
+    directory_name = models.CharField(max_length=100, verbose_name='Название директории', blank=True)
+    path = models.CharField(max_length=100, verbose_name='Путь', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    size = models.IntegerField(default=0, verbose_name='Размер папки,МБ', blank=True)
+    flash_card_count = models.IntegerField(default=1, verbose_name='Количество флешек', blank=True)
+    archives = models.ForeignKey(to=Archives, on_delete=models.PROTECT, related_name='filepath_archives',
+                                 verbose_name='Архив', null=True, blank=True)
+
+    def __str__(self):
+        return self.directory_name
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Директория файла"
+        verbose_name_plural = "Директории  файлов"
+
+
 class Task(models.Model):
     project_task_title = models.CharField(max_length=150, verbose_name='Название')
     slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
     location = models.CharField(max_length=150, verbose_name='Локация', blank=True)
     services = models.ManyToManyField(Services, related_name='tasks_services', verbose_name='Услуги', blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создана')
-    # executor = models.ManyToManyField(Executor, related_name='tasks_executor', verbose_name='Исполнители', blank=True)
-    # equipment = models.ManyToManyField(Equipment, related_name='tasks_equipment', verbose_name='Оборудование', blank=True)
-    # archives = models.ManyToManyField(Archives, related_name='tasks_archives', verbose_name='Архив', blank=True)
+    executor = models.ManyToManyField(Executor, related_name='tasks_executor', verbose_name='Исполнители', blank=True)
+    archives = models.ManyToManyField(Archives, related_name='tasks_archives', verbose_name='Архивы', blank=True)
     task_start_date = models.DateField(verbose_name='Начало', null=True, blank=True)
     task_deadline = models.DateField(verbose_name='Дедлайн', null=True, blank=True)
     project_task_status = models.ForeignKey(ProjectTaskStatus, on_delete=models.PROTECT,
@@ -316,3 +413,65 @@ class Task(models.Model):
         ordering = ['-created_at']
         verbose_name = "Задачу"
         verbose_name_plural = "Задачи"
+
+
+class EquipmentType(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Название')
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Тип оборудования"
+        verbose_name_plural = "Типы оборудования"
+
+
+class EquipmentBrand(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Название')
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Бренд оборудования"
+        verbose_name_plural = "Бренды оборудования"
+
+
+class Equipment(models.Model):
+    equipment_type = models.ForeignKey(EquipmentType, on_delete=models.PROTECT, related_name='equipment_type',
+                                       verbose_name='Тип оборудования', null=True, blank=True)
+    brand = models.ForeignKey(EquipmentBrand, on_delete=models.PROTECT, related_name='equipment_brand',
+                              verbose_name='Бренд оборудования', null=True, blank=True)
+    model = models.CharField(max_length=100, verbose_name='Модель', blank=True)
+    equipment_description = models.TextField(verbose_name='Описание', blank=True)
+    comment = models.TextField(verbose_name='Комментарий', blank=True)
+    buy_date = models.DateField(verbose_name='Дата покупки по чеку', null=True, blank=True)
+    chek_number = models.CharField(max_length=150, verbose_name='Номер документа', blank=True)
+    chek_date = models.DateField(verbose_name='Дата документа', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Добавлено')
+    sn = models.CharField(max_length=100, verbose_name='s/n', blank=True)
+    count = models.PositiveSmallIntegerField(verbose_name='Кол-во', blank=True)
+    owner_executor = models.ForeignKey(Executor, on_delete=models.PROTECT, related_name='equipment_executor',
+                                       verbose_name='Владелец', null=True, blank=True)
+    owner_arenda = models.BooleanField(verbose_name='Аренда')
+    owner_office = models.BooleanField(verbose_name='Офисное оборудование')
+    roma = models.BooleanField(verbose_name='Украл Рома')
+    equipment_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Себестоимость/час,₽',
+                                         blank=True)
+    equipment_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость/час,₽',
+                                          blank=True)
+    price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость покупки', blank=True)
+    link = models.URLField(verbose_name='Ссылка на аренду', blank=True)
+    equipment_photo = models.ImageField(upload_to='equipment_photo/', verbose_name='Фото', null=True, blank=True)
+
+    def __str__(self):
+        return self.model
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Оборудование"
+        verbose_name_plural = "Оборудование"
