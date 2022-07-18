@@ -337,6 +337,28 @@ class ExecutorLevel(models.Model):
         verbose_name = "Уровень Исполнителя"
         verbose_name_plural = "Уровни Исполнителей"
 
+class ExecutorSkills(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Навык')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Навык Исполнителя"
+        verbose_name_plural = "Навыки Исполнителей"
+
+class ExecutorPrograms(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Программа')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Работа в программах"
+        verbose_name_plural = "Работа в программах"
+
 
 class Executor(models.Model):
     name = models.CharField(max_length=100, verbose_name='Имя', blank=True)
@@ -351,24 +373,28 @@ class Executor(models.Model):
                                         blank=True)
     type_of_executor = models.ManyToManyField(TypeOfExecutor, related_name='executor_type_of', verbose_name='Должность',
                                               blank=True)
+    executor_skills = models.ManyToManyField(ExecutorSkills, related_name='executor_skills', verbose_name='Навыки', blank=True)
+    executor_programs = models.ManyToManyField(ExecutorPrograms, related_name='executor_programs', verbose_name='Программы',
+                                             blank=True)
     executor_photo = models.ImageField(upload_to='executor_photo/', verbose_name='Фото', null=True, blank=True)
     phone_number = models.CharField(max_length=100, verbose_name='Телефон', blank=True)
     executor_email = models.EmailField(verbose_name='E-mail', blank=True)
     executor_tg = models.CharField(max_length=100, verbose_name='Телеграм', blank=True)
     birth = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
-    passport_s = models.IntegerField(verbose_name='Серия паспорта', blank=True)
-    passport_n = models.IntegerField(verbose_name='Номер паспорта', blank=True)
+    passport_s = models.IntegerField(verbose_name='Серия паспорта', null=True, blank=True)
+    passport_n = models.IntegerField(verbose_name='Номер паспорта', null=True, blank=True)
     vydan = models.TextField(verbose_name='Выдан', blank=True)
     data_vydachi = models.DateField(verbose_name='Дата выдачи', null=True, blank=True)
     adress = models.TextField(verbose_name='Прописка', blank=True)
     adress_date = models.DateField(verbose_name='Дата регистрации', null=True, blank=True)
     birth_location = models.TextField(verbose_name='Место рождения', blank=True)
-    kod_podrazdelenia = models.IntegerField(verbose_name='Код подразделения', blank=True)
+    kod_podrazdelenia = models.IntegerField(verbose_name='Код подразделения', null=True, blank=True)
     driving_license = models.BooleanField(verbose_name='Наличие прав')
     car = models.ManyToManyField(Car, related_name='executor_car', verbose_name='Авто', blank=True)
     executor_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Ставка', blank=True)
     executor_level = models.ForeignKey(to=ExecutorLevel, on_delete=models.PROTECT, related_name='executor_level',
                                        verbose_name='Уровень', null=True, blank=True)
+    executor_city = models.CharField(max_length=100, verbose_name='Город', blank=True)
     executor_comment = models.TextField(verbose_name='Комментарий', blank=True)
 
     def __str__(self):

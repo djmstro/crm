@@ -161,6 +161,12 @@ class TypeOfInteractionAdmin(admin.ModelAdmin):
 class ExecutorLevelAdmin(admin.ModelAdmin):
     search_fields = ['title']
 
+class ExecutorSkillsAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+class ExecutorProgramsAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
 
 class ExecutorAdmin(admin.ModelAdmin):
     save_on_top = True
@@ -169,7 +175,7 @@ class ExecutorAdmin(admin.ModelAdmin):
     search_fields = ['last_name']
     readonly_fields = ['created_at', 'get_photo']
     prepopulated_fields = {"slug": ("last_name",)}
-    list_filter = ('department', 'type_of_executor', 'driving_license', 'executor_level',)
+    list_filter = ('type_of_interaction', 'executor_programs', 'executor_skills', 'executor_level', 'department', 'type_of_executor', 'driving_license',)
 
     def get_photo(self, obj):
         if obj.executor_photo:
@@ -241,6 +247,8 @@ admin.site.register(Department, DepartmentAdmin)
 admin.site.register(FilePath, FilePathAdmin)
 admin.site.register(TypeOfInteraction, TypeOfInteractionAdmin)
 admin.site.register(ExecutorLevel, ExecutorLevelAdmin)
+admin.site.register(ExecutorSkills, ExecutorSkillsAdmin)
+admin.site.register(ExecutorPrograms, ExecutorProgramsAdmin)
 admin.site.register(Executor, ExecutorAdmin)
 admin.site.register(Car, CarAdmin)
 admin.site.register(Archives, ArchivesAdmin)
