@@ -5,15 +5,15 @@ from .models import *
 
 
 class Status_projectAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
+    list_display = ['title']
 
 
 class Type_callAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
+    list_display = ['title']
 
 
 class DocumentStatusAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
+    list_display = ['title']
 
 
 class DogovorTaskAdmin(admin.ModelAdmin):
@@ -50,8 +50,8 @@ class DogovorAdmin(admin.ModelAdmin):
 
 class CompanyAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('id', 'short_name', 'company_email', 'inn', 'kpp', 'director', 'get_logo')
-    list_display_links = ('id', 'short_name')
+    list_display = ('short_name', 'company_email', 'inn', 'kpp', 'director', 'get_logo')
+    list_display_links = ['short_name']
     search_fields = ['short_name']
     readonly_fields = ['created_at']
     prepopulated_fields = {"slug": ("short_name",)}
@@ -67,12 +67,12 @@ class CompanyAdmin(admin.ModelAdmin):
 
 class CustumerAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('id', 'name', 'last_name', 'get_photo', 'custumer_phone', 'custumer_email', 'type_call')
-    list_display_links = ('id', 'name', 'last_name', 'get_photo')
+    list_display = ('name', 'last_name', 'get_photo', 'custumer_phone', 'custumer_email', 'type_call')
+    list_display_links = ('name', 'last_name', 'get_photo')
     search_fields = ['name', 'last_name', 'custumer_phone', 'custumer_email']
     readonly_fields = ('created_at', 'get_photo')
     list_filter = ('phisic_person', 'company', 'custumer_position',)
-    prepopulated_fields = {"slug": ("surname",)}
+    prepopulated_fields = {"slug": ("last_name",)}
 
     def get_photo(self, obj):
         if obj.custumer_photo:
@@ -85,7 +85,7 @@ class CustumerAdmin(admin.ModelAdmin):
 class ProjectAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        'id', 'title', 'custumer', 'project_deadline', 'get_photo', 'created_at', 'start_project', 'status_project')
+    'id', 'title', 'custumer', 'project_deadline', 'get_photo', 'created_at', 'start_project', 'status_project')
     list_display_links = ('id', 'title', 'custumer', 'get_photo')
     search_fields = ['title']
     list_filter = ('status_project', 'custumer',)
@@ -99,20 +99,18 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class ProjectTaskStatusAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
+    list_display = ['title']
 
 
 class TaskTypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
+    list_display = ['title']
 
 
 class ParkingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
+    list_display = ['title']
 
 
 class ServiceCategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
-    list_display_links = ('id', 'title')
     search_fields = ['title']
     prepopulated_fields = {"slug": ("title",)}
 
@@ -125,31 +123,24 @@ class ServicesAdmin(admin.ModelAdmin):
 
 
 class TypeOfExecutorAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
-    list_display_links = ('id', 'title')
     search_fields = ['title']
     prepopulated_fields = {"slug": ("title",)}
 
 
 class TypeOfExecutorAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
-    list_display_links = ('id', 'title')
     search_fields = ['title']
     prepopulated_fields = {"slug": ("title",)}
 
 
 class ArchivesAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('id', 'archives_title', 'created_at', 'full_size', 'sn')
-    list_display_links = ('id', 'archives_title')
+    list_display = ('archives_title', 'created_at', 'full_size', 'sn')
     search_fields = ['archives_title']
     readonly_fields = ['created_at']
     prepopulated_fields = {"slug": ("archives_title",)}
 
 
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
-    list_display_links = ('id', 'title')
     search_fields = ['title']
     prepopulated_fields = {"slug": ("title",)}
 
@@ -163,14 +154,22 @@ class FilePathAdmin(admin.ModelAdmin):
     list_filter = ('archives',)
 
 
+class TypeOfInteractionAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
+class ExecutorLevelAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
 class ExecutorAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('id', 'last_name', 'name', 'created_at', 'phone_number', 'get_photo')
-    list_display_links = ('id', 'last_name', 'name', 'get_photo')
+    list_display = ('last_name', 'name', 'created_at', 'phone_number', 'executor_email', 'executor_tg', 'get_photo')
+    list_display_links = ('last_name', 'name', 'get_photo')
     search_fields = ['last_name']
     readonly_fields = ['created_at', 'get_photo']
     prepopulated_fields = {"slug": ("last_name",)}
-    list_filter = ('department', 'office', 'driving_license',)
+    list_filter = ('department', 'type_of_executor', 'driving_license', 'executor_level',)
 
     def get_photo(self, obj):
         if obj.executor_photo:
@@ -179,10 +178,9 @@ class ExecutorAdmin(admin.ModelAdmin):
 
 
 class CarAdmin(admin.ModelAdmin):
-    list_display = ('id', 'brand', 'model', 'number')
-    list_display_links = ('id', 'brand', 'model', 'number')
+    list_display = ('brand', 'model', 'number')
+    list_display_links = ('brand', 'model', 'number')
     search_fields = ['brand', 'model', 'number']
-    list_filter = ('executor',)
 
 
 class TaskAdmin(admin.ModelAdmin):
@@ -195,19 +193,14 @@ class TaskAdmin(admin.ModelAdmin):
     search_fields = ['project_task_title']
     list_filter = ('project_task_status', 'task_type', 'executor', 'project', 'archives', 'services',)
     readonly_fields = ['created_at']
-    prepopulated_fields = {"slug": ("project_task_title",)}
 
 
 class EquipmentTypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
-    list_display_links = ('id', 'title')
     search_fields = ['title']
     prepopulated_fields = {"slug": ("title",)}
 
 
 class EquipmentBrandAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
-    list_display_links = ('id', 'title')
     search_fields = ['title']
     prepopulated_fields = {"slug": ("title",)}
 
@@ -246,6 +239,8 @@ admin.site.register(TypeOfExecutor, TypeOfExecutorAdmin)
 admin.site.register(Services, ServicesAdmin)
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(FilePath, FilePathAdmin)
+admin.site.register(TypeOfInteraction, TypeOfInteractionAdmin)
+admin.site.register(ExecutorLevel, ExecutorLevelAdmin)
 admin.site.register(Executor, ExecutorAdmin)
 admin.site.register(Car, CarAdmin)
 admin.site.register(Archives, ArchivesAdmin)

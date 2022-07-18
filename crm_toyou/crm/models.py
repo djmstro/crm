@@ -26,21 +26,21 @@ class Type_call(models.Model):
 
 
 class Company(models.Model):
-    name = models.CharField(max_length=150, verbose_name='Название', blank=True)
-    short_name = models.CharField(max_length=150, verbose_name='Короткое название', blank=True)
-    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+    name = models.TextField(verbose_name='Название', blank=True)
+    short_name = models.CharField(max_length=200, verbose_name='Короткое название', blank=True)
+    slug = models.SlugField(max_length=200, verbose_name='Url', unique=True)
     company_adress = models.TextField(verbose_name='Адрес', blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Добавлена')
-    company_phone_number = models.CharField(max_length=150, verbose_name='Телефон', blank=True)
+    company_phone_number = models.CharField(max_length=100, verbose_name='Телефон', blank=True)
     company_email = models.EmailField(verbose_name='Email', blank=True)
-    inn = models.IntegerField(verbose_name='ИНН', blank=True)
-    kpp = models.IntegerField(verbose_name='КПП', blank=True)
-    ogrn = models.IntegerField(verbose_name='ОГРН', blank=True)
-    rs = models.IntegerField(verbose_name='Расчетный счет', blank=True)
-    bank_name = models.CharField(max_length=150, verbose_name='Банк', blank=True)
-    korr_schet = models.IntegerField(verbose_name='Корреспондентский счет', blank=True)
-    bik = models.IntegerField(verbose_name='БИК', blank=True)
-    director = models.CharField(max_length=150, verbose_name='Директор')
+    inn = models.BigIntegerField(verbose_name='ИНН', blank=True)
+    kpp = models.BigIntegerField(verbose_name='КПП', blank=True)
+    ogrn = models.BigIntegerField(verbose_name='ОГРН', blank=True)
+    rs = models.CharField(max_length=30, verbose_name='Расчетный счет', blank=True)
+    bank_name = models.CharField(max_length=200, verbose_name='Банк', blank=True)
+    korr_schet = models.CharField(max_length=30, verbose_name='Корреспондентский счет', blank=True)
+    bik = models.BigIntegerField(verbose_name='БИК', blank=True)
+    director = models.CharField(max_length=200, verbose_name='Директор')
     director_main = models.TextField(verbose_name='На основании', blank=True)
     company_logo = models.ImageField(upload_to='companies_logo/', verbose_name='Логотип', null=True, blank=True)
     comment = models.TextField(verbose_name='Комментарий', blank=True)
@@ -79,7 +79,7 @@ class Custumer(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Заказчика"
-        verbose_name_plural = "Заказчики"
+        verbose_name_plural = "003_Заказчики"
 
 
 class DocumentStatus(models.Model):
@@ -111,7 +111,7 @@ class Dogovor(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Договор"
-        verbose_name_plural = "Договоры"
+        verbose_name_plural = "007_Договоры"
 
 
 class DogovorTask(models.Model):
@@ -131,7 +131,7 @@ class DogovorTask(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Задание"
-        verbose_name_plural = "Задания"
+        verbose_name_plural = "008_Задания"
 
 
 class Schet(models.Model):
@@ -151,7 +151,7 @@ class Schet(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Счет"
-        verbose_name_plural = "Счета"
+        verbose_name_plural = "009_Счета"
 
 
 class Akt(models.Model):
@@ -171,7 +171,7 @@ class Akt(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Акт"
-        verbose_name_plural = "Акты"
+        verbose_name_plural = "010_Акты"
 
 
 class Project(models.Model):
@@ -197,7 +197,7 @@ class Project(models.Model):
     class Meta:
         ordering = ['-created_at']
         verbose_name = "Проект"
-        verbose_name_plural = "Проекты"
+        verbose_name_plural = "001_Проекты"
 
 
 class ProjectTaskStatus(models.Model):
@@ -246,7 +246,7 @@ class ServiceCategory(models.Model):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Категория услуги"
+        verbose_name = "Категорию услуги"
         verbose_name_plural = "Категории услуг"
 
 
@@ -259,7 +259,7 @@ class TypeOfExecutor(models.Model):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Сотрудник"
+        verbose_name = "Сотрудника"
         verbose_name_plural = "Сотрудники"
 
 
@@ -283,7 +283,7 @@ class Services(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Услугу"
-        verbose_name_plural = "Услуги"
+        verbose_name_plural = "005_Услуги"
 
 
 class Department(models.Model):
@@ -299,47 +299,11 @@ class Department(models.Model):
         verbose_name_plural = "Отделы"
 
 
-class Executor(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Имя', blank=True)
-    surname = models.CharField(max_length=100, verbose_name='Отчество', blank=True)
-    last_name = models.CharField(max_length=100, verbose_name='Фамилия', blank=True)
-    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
-    department = models.ManyToManyField(Department, related_name='executor_department', verbose_name='Отдел',
-                                        blank=True)
-    birth = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
-    phone_number = models.CharField(max_length=100, verbose_name='Телефон', blank=True)
-    executor_email = models.EmailField(verbose_name='E-mail', blank=True)
-    office = models.BooleanField(verbose_name='Офисный сотрудник')
-    executor_photo = models.ImageField(upload_to='executor_photo/', verbose_name='Фото', null=True, blank=True)
-    passport_s = models.IntegerField(default=0, verbose_name='Серия паспорта')
-    passport_n = models.IntegerField(default=0, verbose_name='Номер паспорта')
-    birth_location = models.TextField(verbose_name='Место рождения')
-    adress_date = models.DateField(verbose_name='Дата регистрации', null=True, blank=True)
-    adress = models.TextField(verbose_name='Прописка')
-    vydan = models.TextField(verbose_name='Выдан')
-    data_vydachi = models.DateField(verbose_name='Дата выдачи', null=True, blank=True)
-    kod_podrazdelenia = models.IntegerField(default=0, verbose_name='Код подразделения')
-    driving_license = models.BooleanField(verbose_name='Наличие прав')
-    executor_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Себестоимость/час,₽',
-                                        blank=True)
-
-    def __str__(self):
-        return self.last_name
-
-    class Meta:
-        ordering = ['id']
-        verbose_name = "Исполнителя"
-        verbose_name_plural = "Исполнители"
-
-
 class Car(models.Model):
     brand = models.CharField(max_length=100, verbose_name='Марка', blank=True)
     model = models.CharField(max_length=100, verbose_name='Модель', blank=True)
     number = models.CharField(max_length=100, verbose_name='Регистрационный номер', blank=True)
     color = models.CharField(max_length=100, verbose_name='Цвет авто', blank=True)
-    executor = models.ForeignKey(to=Executor, on_delete=models.PROTECT, related_name='car_executor',
-                                 verbose_name='Исполнитель', null=True, blank=True)
 
     def __str__(self):
         return self.model
@@ -348,6 +312,72 @@ class Car(models.Model):
         ordering = ['id']
         verbose_name = "Автомобиль"
         verbose_name_plural = "Автомобили"
+
+
+class TypeOfInteraction(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Название')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Тип взаимодейтсвия"
+        verbose_name_plural = "Типы взаимодействия"
+
+
+class ExecutorLevel(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Название')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Уровень Исполнителя"
+        verbose_name_plural = "Уровни Исполнителей"
+
+
+class Executor(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Имя', blank=True)
+    surname = models.CharField(max_length=100, verbose_name='Отчество', blank=True)
+    last_name = models.CharField(max_length=100, verbose_name='Фамилия', blank=True)
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    type_of_interaction = models.ForeignKey(to=TypeOfInteraction, on_delete=models.PROTECT,
+                                            related_name='executor_interaction', verbose_name='Тип взаимодейтсвия',
+                                            null=True, blank=True)
+    department = models.ManyToManyField(Department, related_name='executor_department', verbose_name='Отдел',
+                                        blank=True)
+    type_of_executor = models.ManyToManyField(TypeOfExecutor, related_name='executor_type_of', verbose_name='Должность',
+                                              blank=True)
+    executor_photo = models.ImageField(upload_to='executor_photo/', verbose_name='Фото', null=True, blank=True)
+    phone_number = models.CharField(max_length=100, verbose_name='Телефон', blank=True)
+    executor_email = models.EmailField(verbose_name='E-mail', blank=True)
+    executor_tg = models.CharField(max_length=100, verbose_name='Телеграм', blank=True)
+    birth = models.DateField(verbose_name='Дата рождения', null=True, blank=True)
+    passport_s = models.IntegerField(verbose_name='Серия паспорта', blank=True)
+    passport_n = models.IntegerField(verbose_name='Номер паспорта', blank=True)
+    vydan = models.TextField(verbose_name='Выдан', blank=True)
+    data_vydachi = models.DateField(verbose_name='Дата выдачи', null=True, blank=True)
+    adress = models.TextField(verbose_name='Прописка', blank=True)
+    adress_date = models.DateField(verbose_name='Дата регистрации', null=True, blank=True)
+    birth_location = models.TextField(verbose_name='Место рождения', blank=True)
+    kod_podrazdelenia = models.IntegerField(verbose_name='Код подразделения', blank=True)
+    driving_license = models.BooleanField(verbose_name='Наличие прав')
+    car = models.ManyToManyField(Car, related_name='executor_car', verbose_name='Авто', blank=True)
+    executor_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Ставка', blank=True)
+    executor_level = models.ForeignKey(to=ExecutorLevel, on_delete=models.PROTECT, related_name='executor_level',
+                                       verbose_name='Уровень', null=True, blank=True)
+    executor_comment = models.TextField(verbose_name='Комментарий', blank=True)
+
+    def __str__(self):
+        return self.last_name
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Исполнителя"
+        verbose_name_plural = "004_Исполнители"
 
 
 class Archives(models.Model):
@@ -363,7 +393,7 @@ class Archives(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Архив"
-        verbose_name_plural = "Архивы"
+        verbose_name_plural = "011_Архивы"
 
 
 class FilePath(models.Model):
@@ -380,13 +410,12 @@ class FilePath(models.Model):
 
     class Meta:
         ordering = ['id']
-        verbose_name = "Директория файла"
-        verbose_name_plural = "Директории  файлов"
+        verbose_name = "Директорию файла"
+        verbose_name_plural = "012_Директории  файлов"
 
 
 class Task(models.Model):
     project_task_title = models.CharField(max_length=150, verbose_name='Название')
-    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
     location = models.CharField(max_length=150, verbose_name='Локация', blank=True)
     services = models.ManyToManyField(Services, related_name='tasks_services', verbose_name='Услуги', blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создана')
@@ -412,7 +441,7 @@ class Task(models.Model):
     class Meta:
         ordering = ['-created_at']
         verbose_name = "Задачу"
-        verbose_name_plural = "Задачи"
+        verbose_name_plural = "002_Задачи"
 
 
 class EquipmentType(models.Model):
@@ -474,4 +503,4 @@ class Equipment(models.Model):
     class Meta:
         ordering = ['id']
         verbose_name = "Оборудование"
-        verbose_name_plural = "Оборудование"
+        verbose_name_plural = "006_Оборудование"
