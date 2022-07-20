@@ -26,3 +26,8 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Admin Site Config
+admin.sites.AdminSite.site_header = 'CRM 2You Studio'
+admin.sites.AdminSite.site_title = 'CRM 2You Studio'
+admin.sites.AdminSite.index_title = 'Админ панель'
