@@ -88,14 +88,12 @@ class CustumerAdmin(admin.ModelAdmin):
 class ProjectAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        'id', 'title', 'custumer', 'project_deadline', 'get_photo', 'created_at', 'start_project', 'status_project',
-        'get_dogovor', 'get_document_status')
-    list_display_links = ('id', 'title', 'custumer', 'get_photo')
+        'title', 'custumer', 'created_at', 'status_project', 'get_dogovor', 'get_document_status', 'get_dogovor_price')
+    list_display_links = ('title', 'custumer')
     search_fields = ['title']
     list_filter = ('status_project', ('custumer', admin.RelatedOnlyFieldListFilter),)
-    readonly_fields = ('created_at', 'get_photo')
     prepopulated_fields = {"slug": ("title",)}
-    list_editable = ('project_deadline', 'status_project',)
+    list_editable = ('status_project',)
 
     def get_photo(self, obj):
         if obj.project_photo:
@@ -113,6 +111,11 @@ class ProjectAdmin(admin.ModelAdmin):
         return ([p.document_status for p in obj.dogovor.all()])
 
     get_document_status.short_description = 'Статус документа'
+
+    def get_dogovor_price(self, obj):
+        return ([p.dogovor_price for p in obj.dogovor.all()])
+
+    get_dogovor_price.short_description = 'Сумма договора'
 
 
 class ProjectTaskStatusAdmin(admin.ModelAdmin):
@@ -281,7 +284,7 @@ class CarAdmin(admin.ModelAdmin):
 class TaskAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        'id', 'project_task_title', 'project', 'get_executor', 'priority', 'created_at', 'task_start_date',
+        'id', 'project_task_title', 'project', 'get_executor', 'created_at', 'priority', 'task_start_date',
         'task_deadline',
         'project_task_status',
         'task_type', 'get_archive', 'get_file_path', 'final_clip_Vimeo', 'final_clip_yandex')
