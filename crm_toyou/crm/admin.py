@@ -198,23 +198,56 @@ class ReferenceAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'title', 'reference_url',)
     search_fields = ['title', 'reference_url', ]
     list_filter = (
-    ('executor_level', admin.RelatedOnlyFieldListFilter), ('executor_skills', admin.RelatedOnlyFieldListFilter),
-    'reference_platform',)
+        ('executor_level', admin.RelatedOnlyFieldListFilter), ('executor_skills', admin.RelatedOnlyFieldListFilter),
+        'reference_platform',)
+
+
+class CostValueAdmin(admin.ModelAdmin):
+    search_fields = ['title']
 
 
 class ExecutorAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-    'get_photo', 'name', 'last_name', 'get_type_of_executor', 'phone_number', 'executor_email', 'executor_tg',
-    'get_executor_skills', 'driving_license', 'executor_level', 'executor_city', 'get_reference')
+        'get_photo', 'name', 'last_name', 'get_type_of_executor', 'phone_number', 'executor_email', 'executor_tg',
+        'get_executor_skills', 'driving_license', 'executor_level', 'executor_city', 'get_reference')
     list_display_links = ('last_name', 'name', 'get_photo')
     search_fields = ['name', 'last_name', 'phone_number', 'executor_email', 'executor_tg']
     readonly_fields = ['created_at', 'get_photo']
     prepopulated_fields = {"slug": ("last_name",)}
     list_filter = (
-    'type_of_interaction', 'executor_programs', ('executor_skills', admin.RelatedOnlyFieldListFilter), 'executor_level',
-    'department', ('type_of_executor', admin.RelatedOnlyFieldListFilter),
-    ('driving_license', admin.BooleanFieldListFilter),)
+        'type_of_interaction', 'executor_programs', ('executor_skills', admin.RelatedOnlyFieldListFilter),
+        'executor_level',
+        'department', ('type_of_executor', admin.RelatedOnlyFieldListFilter),
+        ('driving_license', admin.BooleanFieldListFilter),)
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'last_name', 'slug', 'surname', 'executor_photo', 'executor_city')
+        }),
+        ('Структурное подразделение', {
+            'fields': ('type_of_interaction', 'department', 'type_of_executor')
+        }),
+        ('Контактная информация', {
+            'fields': ('phone_number', 'executor_email', 'executor_tg')
+        }),
+        ('Навыки и умения', {
+            'fields': ('executor_skills', 'executor_programs', 'executor_level', 'reference')
+        }),
+        ('Оплата и стоимость', {
+            'fields': ('executor_cost', 'cost_value', 'credit_card')
+        }),
+        ('Паспортные данные', {
+            'fields': (
+            'birth', 'passport_s', 'passport_n', 'vydan', 'data_vydachi', 'adress', 'adress_date', 'birth_location',
+            'kod_podrazdelenia')
+        }),
+        ('Автомобиль', {
+            'fields': ('driving_license', 'car')
+        }),
+        ('Остальное', {
+            'fields': ('executor_comment', 'created_at')
+        }),
+    )
 
     def get_photo(self, obj):
         if obj.executor_photo:
@@ -331,6 +364,7 @@ admin.site.register(ExecutorSkills, ExecutorSkillsAdmin)
 admin.site.register(ExecutorPrograms, ExecutorProgramsAdmin)
 admin.site.register(ReferencePlatform, ReferencePlatformAdmin)
 admin.site.register(Reference, ReferenceAdmin)
+admin.site.register(CostValue, CostValueAdmin)
 admin.site.register(Executor, ExecutorAdmin)
 admin.site.register(Car, CarAdmin)
 admin.site.register(Archives, ArchivesAdmin)

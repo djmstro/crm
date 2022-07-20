@@ -394,6 +394,16 @@ class Reference(models.Model):
         verbose_name = "Референс"
         verbose_name_plural = "Референсы"
 
+class CostValue(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Ед.измерения')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Единицу измерения"
+        verbose_name_plural = "Единицы измерения"
 
 class Executor(models.Model):
     name = models.CharField(max_length=100, verbose_name='Имя', blank=True)
@@ -426,9 +436,11 @@ class Executor(models.Model):
     adress_date = models.DateField(verbose_name='Дата регистрации', null=True, blank=True)
     birth_location = models.TextField(verbose_name='Место рождения', blank=True)
     kod_podrazdelenia = models.IntegerField(verbose_name='Код подразделения', null=True, blank=True)
-    driving_license = models.BooleanField(verbose_name='Наличие прав')
+    driving_license = models.BooleanField(verbose_name='в/у')
     car = models.ManyToManyField(Car, related_name='executor_car', verbose_name='Авто', blank=True)
     executor_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Ставка', blank=True)
+    cost_value = models.ForeignKey(CostValue, on_delete=models.PROTECT, related_name='executor_cost_value',
+                                   verbose_name='ед.измерения', null=True, blank=True)
     executor_level = models.ForeignKey(to=ExecutorLevel, on_delete=models.PROTECT, related_name='executor_level',
                                        verbose_name='Уровень', null=True, blank=True)
     executor_city = models.CharField(max_length=100, verbose_name='Город', blank=True)
