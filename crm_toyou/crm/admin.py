@@ -98,14 +98,16 @@ class CustumerAdmin(admin.ModelAdmin):
 
     get_photo.short_description = 'Фото'
 
+class IsPaidAdmin(admin.ModelAdmin):
+    list_display = ['title']
 
 class ProjectAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        'title', 'custumer', 'created_at', 'status_project', 'is_long', 'get_dogovor', 'get_document_status', 'get_dogovor_price')
+        'title', 'custumer', 'created_at', 'status_project', 'is_long', 'get_dogovor', 'get_document_status', 'get_dogovor_price', 'is_paid')
     list_display_links = ('title', 'custumer')
     search_fields = ['title']
-    list_filter = ('status_project', ('custumer', admin.RelatedOnlyFieldListFilter),)
+    list_filter = ('status_project', 'is_paid', ('custumer', admin.RelatedOnlyFieldListFilter),)
     prepopulated_fields = {"slug": ("title",)}
     list_editable = ('status_project',)
     readonly_fields = ['created_at']
@@ -123,7 +125,10 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('status_project', 'is_long')
         }),
         ('Документы', {
-            'fields': ['dogovor']
+            'fields': ('dogovor', 'origin_tz', 'kp')
+        }),
+        ('Стоимость', {
+            'fields': ('project_cost', 'project_price', 'is_paid')
         }),
     )
 
@@ -135,7 +140,7 @@ class ProjectAdmin(admin.ModelAdmin):
     get_photo.short_description = 'Фото'
 
     def get_dogovor(self, obj):
-        return ", \n".join([p.dogovor_title for p in obj.dogovor.all()])
+        return ", \n".join([p.dogovor_number for p in obj.dogovor.all()])
 
     get_dogovor.short_description = 'Договор'
 
@@ -328,7 +333,7 @@ class TaskAdmin(admin.ModelAdmin):
         ('executor', admin.RelatedOnlyFieldListFilter), 'project', ('services', admin.RelatedOnlyFieldListFilter),)
     readonly_fields = ['created_at']
     list_editable = (
-    'task_start_date', 'task_deadline', 'project_task_status', 'task_type', 'final_clip_Vimeo', 'final_clip_yandex',)
+    'task_start_date', 'task_deadline', 'project_task_status',)
     fieldsets = (
         (None, {
             'fields': ('project_task_title', 'priority')
@@ -458,6 +463,7 @@ admin.site.register(Schet, SchetAdmin)
 admin.site.register(Akt, AktAdmin)
 admin.site.register(Dogovor, DogovorAdmin)
 admin.site.register(Custumer, CustumerAdmin)
+admin.site.register(IsPaid, IsPaidAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(ProjectTaskStatus, ProjectTaskStatusAdmin)
 admin.site.register(TaskType, TaskTypeAdmin)

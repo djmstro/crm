@@ -33,15 +33,18 @@ class Company(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Добавлена')
     company_phone_number = models.CharField(max_length=100, verbose_name='Телефон', blank=True)
     company_email = models.EmailField(verbose_name='Email', blank=True)
-    inn = models.BigIntegerField(verbose_name='ИНН', blank=True)
-    kpp = models.BigIntegerField(verbose_name='КПП', blank=True)
-    ogrn = models.BigIntegerField(verbose_name='ОГРН', blank=True)
-    rs = models.CharField(max_length=30, verbose_name='Расчетный счет', blank=True)
-    bank_name = models.CharField(max_length=200, verbose_name='Банк', blank=True)
-    korr_schet = models.CharField(max_length=30, verbose_name='Корреспондентский счет', blank=True)
-    bik = models.BigIntegerField(verbose_name='БИК', blank=True)
-    director = models.CharField(max_length=200, verbose_name='Директор')
+    inn = models.BigIntegerField(verbose_name='ИНН', null=True, blank=True)
+    kpp = models.BigIntegerField(verbose_name='КПП', null=True, blank=True)
+    ogrn = models.BigIntegerField(verbose_name='ОГРН', null=True, blank=True)
+    okpo = models.BigIntegerField(verbose_name='ОКПО', null=True, blank=True)
+    rs = models.CharField(max_length=30, verbose_name='Расчетный счет', null=True, blank=True)
+    bank_name = models.CharField(max_length=200, verbose_name='Банк', null=True, blank=True)
+    korr_schet = models.CharField(max_length=30, verbose_name='Корреспондентский счет', null=True, blank=True)
+    bik = models.BigIntegerField(verbose_name='БИК', null=True, blank=True)
+    director = models.CharField(max_length=200, verbose_name='Директор', blank=True)
     director_main = models.TextField(verbose_name='На основании', blank=True)
+    sign = models.CharField(max_length=200, verbose_name='Имя для подписи', blank=True)
+    in_face = models.CharField(max_length=200, verbose_name='В лице', blank=True)
     company_logo = models.ImageField(upload_to='companies_logo/', verbose_name='Логотип', null=True, blank=True)
     comment = models.TextField(verbose_name='Комментарий', blank=True)
 
@@ -78,7 +81,7 @@ class Custumer(models.Model):
         return self.name + " " + self.last_name
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-id']
         verbose_name = "Заказчика"
         verbose_name_plural = "003_Заказчики"
 
@@ -174,6 +177,16 @@ class Akt(models.Model):
         verbose_name = "Акт"
         verbose_name_plural = "010_Акты"
 
+class IsPaid(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Статус оплаты')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Статус оплаты"
+        verbose_name_plural = "Статусы оплаты"
 
 class Project(models.Model):
     title = models.CharField(max_length=150, verbose_name='Название')
@@ -191,6 +204,11 @@ class Project(models.Model):
                                        verbose_name='Статус')
     is_long = models.BooleanField(verbose_name='Длительный')
     dogovor = models.ManyToManyField(Dogovor, related_name='dogovors', verbose_name='Договор', blank=True)
+    origin_tz = models.FileField(upload_to='docs/tz/', verbose_name='Техническое задание', null=True, blank=True)
+    kp = models.FileField(upload_to='docs/kp/', verbose_name='Коммерческое предложение', null=True, blank=True)
+    project_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Себестоимость', null=True, blank=True)
+    project_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость', null=True, blank=True)
+    is_paid = models.ForeignKey(IsPaid, on_delete=models.PROTECT, related_name='projects_is_paid', verbose_name='Статус оплаты', null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -648,7 +666,7 @@ class OutComing(models.Model):
     outcoming_type = models.ForeignKey(IncomingType, on_delete=models.PROTECT, related_name='outcoming_type',
                                        verbose_name='Тип оплаты', null=True, blank=True)
     executor = models.ForeignKey(Executor, on_delete=models.PROTECT, related_name='outcoming_executor',
-                                 verbose_name='Заказчик', null=True, blank=True)
+                                 verbose_name='Исполнитель', null=True, blank=True)
     company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name='outcoming_company',
                                 verbose_name='Компания', null=True, blank=True)
     project = models.ForeignKey(Project, on_delete=models.PROTECT, related_name='outcoming_projects',
