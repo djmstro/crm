@@ -492,7 +492,8 @@ class FilePath(models.Model):
 
 
 class Task(models.Model):
-    project_task_title = models.CharField(max_length=150, verbose_name='Название')
+    priority = models.IntegerField(default=5, verbose_name='Приоритет')
+    project_task_title = models.CharField(max_length=150, verbose_name='Задача')
     location = models.CharField(max_length=150, verbose_name='Локация', blank=True)
     services = models.ManyToManyField(Services, related_name='tasks_services', verbose_name='Услуги', blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создана')

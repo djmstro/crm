@@ -281,16 +281,19 @@ class CarAdmin(admin.ModelAdmin):
 class TaskAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        'id', 'project', 'get_executor', 'project_task_title', 'created_at', 'task_start_date', 'task_deadline',
+        'id', 'project_task_title', 'project', 'get_executor', 'priority', 'created_at', 'task_start_date',
+        'task_deadline',
         'project_task_status',
         'task_type', 'get_archive', 'get_file_path', 'final_clip_Vimeo', 'final_clip_yandex')
     list_display_links = ('id', 'project_task_title')
     search_fields = ['project_task_title']
     list_filter = (
-    ('project_task_status', admin.RelatedOnlyFieldListFilter), ('task_type', admin.RelatedOnlyFieldListFilter),
-    ('executor', admin.RelatedOnlyFieldListFilter), 'project', ('services', admin.RelatedOnlyFieldListFilter),)
+        ('project_task_status', admin.RelatedOnlyFieldListFilter), 'priority',
+        ('task_type', admin.RelatedOnlyFieldListFilter),
+        ('executor', admin.RelatedOnlyFieldListFilter), 'project', ('services', admin.RelatedOnlyFieldListFilter),)
     readonly_fields = ['created_at']
-    list_editable = ('task_deadline', 'project_task_status', 'task_type', 'final_clip_Vimeo', 'final_clip_yandex',)
+    list_editable = (
+    'task_start_date', 'task_deadline', 'project_task_status', 'task_type', 'final_clip_Vimeo', 'final_clip_yandex',)
 
     def get_executor(self, obj):
         return ", \n".join([p.name + " " + p.last_name for p in obj.executor.all()])
