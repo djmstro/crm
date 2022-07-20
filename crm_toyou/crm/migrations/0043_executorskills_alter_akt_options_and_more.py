@@ -5,7 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('crm', '0042_executorlevel_typeofinteraction_and_more'),
     ]
@@ -53,7 +52,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='filepath',
-            options={'ordering': ['id'], 'verbose_name': 'Директорию файла', 'verbose_name_plural': '012_Директории  файлов'},
+            options={'ordering': ['id'], 'verbose_name': 'Директорию файла',
+                     'verbose_name_plural': '012_Директории  файлов'},
         ),
         migrations.AlterModelOptions(
             name='project',
@@ -81,7 +81,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=100, verbose_name='Программа')),
-                ('executor_level', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='programs_level', to='crm.executorlevel', verbose_name='Уровень владения')),
+                ('executor_level', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT,
+                                                     related_name='programs_level', to='crm.executorlevel',
+                                                     verbose_name='Уровень владения')),
             ],
             options={
                 'verbose_name': 'Работа в программах',
@@ -92,11 +94,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='executor',
             name='executor_programs',
-            field=models.ManyToManyField(blank=True, related_name='executor_programs', to='crm.executorprograms', verbose_name='Программы'),
+            field=models.ManyToManyField(blank=True, related_name='executor_programs', to='crm.executorprograms',
+                                         verbose_name='Программы'),
         ),
         migrations.AddField(
             model_name='executor',
             name='executor_skills',
-            field=models.ManyToManyField(blank=True, related_name='executor_skills', to='crm.executorskills', verbose_name='Навыки'),
+            field=models.ManyToManyField(blank=True, related_name='executor_skills', to='crm.executorskills',
+                                         verbose_name='Навыки'),
         ),
     ]

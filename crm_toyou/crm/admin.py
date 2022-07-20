@@ -18,26 +18,26 @@ class DocumentStatusAdmin(admin.ModelAdmin):
 
 class DogovorTaskAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('dogovor_task_title', 'task_number', 'task_date', 'task_price', 'document_status')
+    list_display = ('dogovor', 'dogovor_task_title', 'task_number', 'task_date', 'task_price', 'document_status')
     list_display_links = ('dogovor_task_title', 'task_number')
     search_fields = ['dogovor_task_title', 'task_number']
-    list_filter = ('document_status', 'dogovor',)
+    list_filter = (('document_status', admin.RelatedOnlyFieldListFilter),)
 
 
 class SchetAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('schet_title', 'schet_number', 'schet_date', 'schet_price', 'document_status')
+    list_display = ('dogovor', 'schet_title', 'schet_number', 'schet_date', 'schet_price', 'document_status')
     list_display_links = ('schet_title', 'schet_number')
     search_fields = ['schet_title', 'schet_number']
-    list_filter = ('document_status', 'dogovor',)
+    list_filter = (('document_status', admin.RelatedOnlyFieldListFilter),)
 
 
 class AktAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('akt_title', 'akt_number', 'akt_date', 'akt_price', 'document_status')
+    list_display = ('dogovor', 'akt_title', 'akt_number', 'akt_date', 'akt_price', 'document_status')
     list_display_links = ('akt_title', 'akt_number')
     search_fields = ['akt_title', 'akt_number']
-    list_filter = ('document_status', 'dogovor',)
+    list_filter = (('document_status', admin.RelatedOnlyFieldListFilter),)
 
 
 class DogovorAdmin(admin.ModelAdmin):
@@ -45,7 +45,8 @@ class DogovorAdmin(admin.ModelAdmin):
     list_display = ('dogovor_title', 'dogovor_number', 'dogovor_date', 'dogovor_price', 'document_status')
     list_display_links = ('dogovor_title', 'dogovor_number')
     search_fields = ['dogovor_title', 'dogovor_number']
-    list_filter = ('document_status', 'custumer',)
+    list_filter = (
+    ('document_status', admin.RelatedOnlyFieldListFilter), ('custumer', admin.RelatedOnlyFieldListFilter),)
 
 
 class CompanyAdmin(admin.ModelAdmin):
@@ -67,12 +68,28 @@ class CompanyAdmin(admin.ModelAdmin):
 
 class CustumerAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('name', 'last_name', 'get_photo', 'custumer_phone', 'custumer_email', 'type_call')
+    list_display = (
+    'get_photo', 'name', 'last_name', 'company', 'custumer_position', 'custumer_phone', 'custumer_email', 'custumer_tg', 'type_call')
     list_display_links = ('name', 'last_name', 'get_photo')
-    search_fields = ['name', 'last_name', 'custumer_phone', 'custumer_email']
+    search_fields = ['name', 'last_name', 'custumer_phone', 'custumer_email', 'custumer_tg']
     readonly_fields = ('created_at', 'get_photo')
-    list_filter = ('phisic_person', 'company', 'custumer_position',)
+    list_filter = (('phisic_person', admin.BooleanFieldListFilter), 'company', 'custumer_position',)
     prepopulated_fields = {"slug": ("last_name",)}
+    list_editable = ('type_call',)
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'last_name', 'slug', 'surname', 'custumer_photo', 'birth')
+        }),
+        ('Контактная информация', {
+            'fields': ('custumer_phone', 'custumer_email', 'custumer_tg', 'type_call')
+        }),
+        ('Компания', {
+            'fields': ('phisic_person', 'company', 'custumer_position', 'custumer_adress')
+        }),
+        ('Остальное', {
+            'fields': ('custumer_comment', 'created_at')
+        }),
+    )
 
     def get_photo(self, obj):
         if obj.custumer_photo:
@@ -85,17 +102,52 @@ class CustumerAdmin(admin.ModelAdmin):
 class ProjectAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-    'id', 'title', 'custumer', 'project_deadline', 'get_photo', 'created_at', 'start_project', 'status_project')
-    list_display_links = ('id', 'title', 'custumer', 'get_photo')
+        'title', 'custumer', 'created_at', 'status_project', 'is_long', 'get_dogovor', 'get_document_status', 'get_dogovor_price')
+    list_display_links = ('title', 'custumer')
     search_fields = ['title']
-    list_filter = ('status_project', 'custumer',)
-    readonly_fields = ('created_at', 'get_photo')
+    list_filter = ('status_project', ('custumer', admin.RelatedOnlyFieldListFilter),)
     prepopulated_fields = {"slug": ("title",)}
+    list_editable = ('status_project',)
+    readonly_fields = ['created_at']
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'slug', 'project_description', 'project_photo')
+        }),
+        ('Сроки', {
+            'fields': ('created_at', 'start_project', 'project_deadline')
+        }),
+        ('Заказчик, представители заказчика', {
+            'fields': ('custumer', 'in_charge', 'in_charge_phone')
+        }),
+        ('Процесс', {
+            'fields': ('status_project', 'is_long')
+        }),
+        ('Документы', {
+            'fields': ['dogovor']
+        }),
+    )
 
     def get_photo(self, obj):
         if obj.project_photo:
             return mark_safe(f'<img src="{obj.project_photo.url}" width="120">')
         return '-'
+
+    get_photo.short_description = 'Фото'
+
+    def get_dogovor(self, obj):
+        return ", \n".join([p.dogovor_title for p in obj.dogovor.all()])
+
+    get_dogovor.short_description = 'Договор'
+
+    def get_document_status(self, obj):
+        return ([p.document_status for p in obj.dogovor.all()])
+
+    get_document_status.short_description = 'Статус документа'
+
+    def get_dogovor_price(self, obj):
+        return ([p.dogovor_price for p in obj.dogovor.all()])
+
+    get_dogovor_price.short_description = 'Сумма договора'
 
 
 class ProjectTaskStatusAdmin(admin.ModelAdmin):
@@ -116,7 +168,9 @@ class ServiceCategoryAdmin(admin.ModelAdmin):
 
 
 class ServicesAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'service_comment', 'must_count', 'service_price', 'service_cost')
+    list_display = (
+    'id', 'service_category', 'type_of_executor', 'title', 'service_comment', 'must_count', 'service_price',
+    'service_cost')
     list_display_links = ('id', 'title')
     search_fields = ['title']
     list_filter = ('service_category', 'type_of_executor',)
@@ -147,11 +201,11 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 class FilePathAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('id', 'directory_name', 'created_at', 'size', 'path', 'flash_card_count')
-    list_display_links = ('id', 'directory_name')
+    list_display = ('id', 'archives', 'path', 'created_at', 'size', 'flash_card_count')
     search_fields = ['directory_name']
     readonly_fields = ['created_at']
-    list_filter = ('archives',)
+    list_filter = (('archives', admin.RelatedOnlyFieldListFilter),)
+    list_editable = ('archives', 'path', 'size', 'flash_card_count',)
 
 
 class TypeOfInteractionAdmin(admin.ModelAdmin):
@@ -161,27 +215,96 @@ class TypeOfInteractionAdmin(admin.ModelAdmin):
 class ExecutorLevelAdmin(admin.ModelAdmin):
     search_fields = ['title']
 
+
 class ExecutorSkillsAdmin(admin.ModelAdmin):
     search_fields = ['title']
+
 
 class ExecutorProgramsAdmin(admin.ModelAdmin):
     search_fields = ['title']
 
 
+class ReferencePlatformAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
+class ReferenceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'reference_url', 'reference_comment')
+    list_display_links = ('id', 'title', 'reference_url',)
+    search_fields = ['title', 'reference_url', ]
+    list_filter = (
+        ('executor_level', admin.RelatedOnlyFieldListFilter), ('executor_skills', admin.RelatedOnlyFieldListFilter),
+        'reference_platform',)
+
+
+class CostValueAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
 class ExecutorAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('last_name', 'name', 'created_at', 'phone_number', 'executor_email', 'executor_tg', 'get_photo')
+    list_display = (
+        'get_photo', 'name', 'last_name', 'get_type_of_executor', 'phone_number', 'executor_email', 'executor_tg',
+        'get_executor_skills', 'driving_license', 'executor_level', 'executor_city', 'get_reference')
     list_display_links = ('last_name', 'name', 'get_photo')
-    search_fields = ['last_name']
+    search_fields = ['name', 'last_name', 'phone_number', 'executor_email', 'executor_tg']
     readonly_fields = ['created_at', 'get_photo']
     prepopulated_fields = {"slug": ("last_name",)}
-    list_filter = ('type_of_interaction', 'executor_programs', 'executor_skills', 'executor_level', 'department', 'type_of_executor', 'driving_license',)
+    list_filter = (
+        'type_of_interaction', 'executor_programs', ('executor_skills', admin.RelatedOnlyFieldListFilter),
+        ('executor_level', admin.RelatedOnlyFieldListFilter),
+        'department', ('type_of_executor', admin.RelatedOnlyFieldListFilter),
+        ('driving_license', admin.BooleanFieldListFilter),)
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'last_name', 'slug', 'surname', 'executor_photo', 'executor_city')
+        }),
+        ('Структурное подразделение', {
+            'fields': ('type_of_interaction', 'department', 'type_of_executor')
+        }),
+        ('Контактная информация', {
+            'fields': ('phone_number', 'executor_email', 'executor_tg')
+        }),
+        ('Навыки и умения', {
+            'fields': ('executor_skills', 'executor_programs', 'executor_level', 'reference')
+        }),
+        ('Оплата и стоимость', {
+            'fields': ('executor_cost', 'cost_value', 'credit_card')
+        }),
+        ('Паспортные данные', {
+            'fields': (
+            'birth', 'passport_s', 'passport_n', 'vydan', 'data_vydachi', 'adress', 'adress_date', 'birth_location',
+            'kod_podrazdelenia')
+        }),
+        ('Автомобиль', {
+            'fields': ('driving_license', 'car')
+        }),
+        ('Остальное', {
+            'fields': ('executor_comment', 'created_at')
+        }),
+    )
 
     def get_photo(self, obj):
         if obj.executor_photo:
             return mark_safe(f'<img src="{obj.executor_photo.url}" width="120">')
         return '-'
 
+    get_photo.short_description = 'Фото'
+
+    def get_executor_skills(self, obj):
+        return ", \n".join([p.title for p in obj.executor_skills.all()])
+
+    get_executor_skills.short_description = 'Навыки'
+
+    def get_type_of_executor(self, obj):
+        return ", \n".join([p.title for p in obj.type_of_executor.all()])
+
+    get_type_of_executor.short_description = 'Должность'
+
+    def get_reference(self, obj):
+        return "\n".join([p.reference_url for p in obj.reference.all()])
+
+    get_reference.short_description = 'Референсы'
 
 class CarAdmin(admin.ModelAdmin):
     list_display = ('brand', 'model', 'number')
@@ -189,16 +312,61 @@ class CarAdmin(admin.ModelAdmin):
     search_fields = ['brand', 'model', 'number']
 
 
+
 class TaskAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        'id', 'project_task_title', 'created_at', 'task_start_date', 'task_deadline', 'project_task_status',
-        'task_type',
-        'final_clip_Vimeo')
+        'id', 'project_task_title', 'project', 'get_executor', 'created_at', 'priority', 'task_start_date',
+        'task_deadline',
+        'project_task_status',
+        'task_type', 'get_archive', 'get_file_path', 'final_clip_Vimeo', 'final_clip_yandex')
     list_display_links = ('id', 'project_task_title')
     search_fields = ['project_task_title']
-    list_filter = ('project_task_status', 'task_type', 'executor', 'project', 'archives', 'services',)
+    list_filter = (
+        ('project_task_status', admin.RelatedOnlyFieldListFilter), 'priority',
+        ('task_type', admin.RelatedOnlyFieldListFilter),
+        ('executor', admin.RelatedOnlyFieldListFilter), 'project', ('services', admin.RelatedOnlyFieldListFilter),)
     readonly_fields = ['created_at']
+    list_editable = (
+    'task_start_date', 'task_deadline', 'project_task_status', 'task_type', 'final_clip_Vimeo', 'final_clip_yandex',)
+    fieldsets = (
+        (None, {
+            'fields': ('project_task_title', 'priority')
+        }),
+        ('Сроки', {
+            'fields': ('created_at', 'task_start_date', 'task_deadline')
+        }),
+        ('Детальная информация', {
+            'fields': ('task_type', 'project', 'executor', 'services')
+        }),
+        ('Процесс', {
+            'fields': ['project_task_status']
+        }),
+        ('Расположение файлов', {
+            'fields': ['file_path']
+        }),
+        ('Съемка', {
+            'fields': ('location', 'parking')
+        }),
+        ('Итоговые файлы', {
+            'fields': ('final_clip_yandex', 'final_clip_Vimeo')
+        }),
+    )
+
+    def get_executor(self, obj):
+        return ", \n".join([p.name + " " + p.last_name for p in obj.executor.all()])
+
+    get_executor.short_description = 'Ответственный'
+
+    def get_file_path(self, obj):
+        return ", \n".join([p.path for p in obj.file_path.all()])
+
+    get_file_path.short_description = 'Расположение файлов'
+
+    def get_archive(self, obj):
+        return ([p.archives for p in obj.file_path.all()])
+
+    get_archive.short_description = 'Архив'
 
 
 class EquipmentTypeAdmin(admin.ModelAdmin):
@@ -214,17 +382,71 @@ class EquipmentBrandAdmin(admin.ModelAdmin):
 class EquipmentAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-    'id', 'brand', 'model', 'equipment_description', 'get_photo', 'sn', 'equipment_cost', 'equipment_price', 'link',
-    'roma', 'price')
+        'id', 'get_photo', 'equipment_type', 'brand', 'model', 'equipment_description', 'owner_executor',
+        'owner_office', 'sn', 'equipment_cost', 'equipment_price', 'link',
+        'roma', 'price')
     list_display_links = ('id', 'brand', 'model', 'get_photo')
     search_fields = ['brand', 'model', 'equipment_description', 'sn']
     readonly_fields = ['created_at', 'get_photo']
-    list_filter = ('equipment_type', 'brand', 'roma',)
+    list_filter = (
+        'equipment_type', ('owner_executor', admin.RelatedOnlyFieldListFilter),
+        ('brand', admin.RelatedOnlyFieldListFilter),
+        'roma',)
+    list_editable = ('owner_office', 'roma',)
+    fieldsets = (
+        (None, {
+            'fields': ('equipment_type', 'brand', 'model', 'equipment_description', 'count', 'comment', 'equipment_photo')
+        }),
+        ('Информация о покупке', {
+            'fields': ('buy_date', 'chek_number', 'chek_date', 'sn', 'created_at')
+        }),
+        ('Владение', {
+            'fields': ('owner_executor', 'owner_arenda', 'owner_office', 'roma')
+        }),
+        ('Стоимость', {
+            'fields': ('equipment_cost', 'equipment_price', 'price', 'link')
+        }),
+    )
 
     def get_photo(self, obj):
         if obj.equipment_photo:
             return mark_safe(f'<img src="{obj.equipment_photo.url}" width="120">')
         return '-'
+
+    get_photo.short_description = 'Фото'
+
+
+class IncomingTypeAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
+class IncomingAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'id', 'title', 'created_at', 'incoming_value', 'incoming_type', 'custumer', 'company', 'schet', 'project',
+        'comment')
+    list_display_links = ('id', 'title')
+    search_fields = ['custumer', 'incoming_value', 'company', 'schet', 'project']
+    list_filter = (
+        'incoming_type', ('company', admin.RelatedOnlyFieldListFilter), ('custumer', admin.RelatedOnlyFieldListFilter),
+        ('project', admin.RelatedOnlyFieldListFilter),)
+
+
+class OutComingTargetAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
+class OutComingAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'id', 'title', 'created_at', 'outcoming_value', 'outcoming_target', 'outcoming_type', 'executor', 'company',
+        'project', 'comment')
+    list_display_links = ('id', 'title')
+    search_fields = ['executor', 'company', 'outcoming_value', 'project', 'outcoming_target', 'outcoming_type']
+    list_filter = (
+        'outcoming_type', 'outcoming_target', ('company', admin.RelatedOnlyFieldListFilter),
+        ('executor', admin.RelatedOnlyFieldListFilter),
+        ('project', admin.RelatedOnlyFieldListFilter),)
 
 
 admin.site.register(Status_project, Status_projectAdmin)
@@ -249,6 +471,9 @@ admin.site.register(TypeOfInteraction, TypeOfInteractionAdmin)
 admin.site.register(ExecutorLevel, ExecutorLevelAdmin)
 admin.site.register(ExecutorSkills, ExecutorSkillsAdmin)
 admin.site.register(ExecutorPrograms, ExecutorProgramsAdmin)
+admin.site.register(ReferencePlatform, ReferencePlatformAdmin)
+admin.site.register(Reference, ReferenceAdmin)
+admin.site.register(CostValue, CostValueAdmin)
 admin.site.register(Executor, ExecutorAdmin)
 admin.site.register(Car, CarAdmin)
 admin.site.register(Archives, ArchivesAdmin)
@@ -256,3 +481,7 @@ admin.site.register(Task, TaskAdmin)
 admin.site.register(EquipmentType, EquipmentTypeAdmin)
 admin.site.register(EquipmentBrand, EquipmentBrandAdmin)
 admin.site.register(Equipment, EquipmentAdmin)
+admin.site.register(IncomingType, IncomingTypeAdmin)
+admin.site.register(Incoming, IncomingAdmin)
+admin.site.register(OutComingTarget, OutComingTargetAdmin)
+admin.site.register(OutComing, OutComingAdmin)
