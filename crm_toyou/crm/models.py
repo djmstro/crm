@@ -582,3 +582,79 @@ class Equipment(models.Model):
         ordering = ['id']
         verbose_name = "Оборудование"
         verbose_name_plural = "006_Оборудование"
+
+
+class IncomingType(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Тип оплаты')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Тип оплаты"
+        verbose_name_plural = "Типы оплаты"
+
+
+class Incoming(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Наименование', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата')
+    incoming_value = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Сумма,₽',
+                                         blank=True)
+    incoming_type = models.ForeignKey(IncomingType, on_delete=models.PROTECT, related_name='incoming_type',
+                                      verbose_name='Тип оплаты', null=True, blank=True)
+    custumer = models.ForeignKey(Custumer, on_delete=models.PROTECT, related_name='incoming_custumer',
+                                 verbose_name='Заказчик', null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name='incoming_company',
+                                verbose_name='Компания', null=True, blank=True)
+    schet = models.ForeignKey(Schet, on_delete=models.PROTECT, related_name='incoming_schet',
+                              verbose_name='Счет на оплату', null=True, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.PROTECT, related_name='incoming_projects',
+                                verbose_name='Проект', null=True, blank=True)
+    comment = models.TextField(verbose_name='Комментарий', blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Приход"
+        verbose_name_plural = "013_Приход"
+
+
+class OutComingTarget(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Цель оплаты')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Цель оплаты"
+        verbose_name_plural = "Цели оплаты"
+
+
+class OutComing(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Наименование', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата')
+    outcoming_value = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Сумма,₽',
+                                          blank=True)
+    outcoming_target = models.ForeignKey(OutComingTarget, on_delete=models.PROTECT, related_name='outcoming_type',
+                                         verbose_name='Цель оплаты', null=True, blank=True)
+    outcoming_type = models.ForeignKey(IncomingType, on_delete=models.PROTECT, related_name='outcoming_type',
+                                       verbose_name='Тип оплаты', null=True, blank=True)
+    executor = models.ForeignKey(Executor, on_delete=models.PROTECT, related_name='outcoming_executor',
+                                 verbose_name='Заказчик', null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name='outcoming_company',
+                                verbose_name='Компания', null=True, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.PROTECT, related_name='outcoming_projects',
+                                verbose_name='Проект', null=True, blank=True)
+    comment = models.TextField(verbose_name='Комментарий', blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Траты"
+        verbose_name_plural = "014_Траты"

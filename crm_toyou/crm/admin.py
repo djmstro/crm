@@ -217,7 +217,7 @@ class ExecutorAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("last_name",)}
     list_filter = (
         'type_of_interaction', 'executor_programs', ('executor_skills', admin.RelatedOnlyFieldListFilter),
-        'executor_level',
+        ('executor_level', admin.RelatedOnlyFieldListFilter),
         'department', ('type_of_executor', admin.RelatedOnlyFieldListFilter),
         ('driving_license', admin.BooleanFieldListFilter),)
     fieldsets = (
@@ -328,8 +328,9 @@ class EquipmentAdmin(admin.ModelAdmin):
     search_fields = ['brand', 'model', 'equipment_description', 'sn']
     readonly_fields = ['created_at', 'get_photo']
     list_filter = (
-    'equipment_type', ('owner_executor', admin.RelatedOnlyFieldListFilter), ('brand', admin.RelatedOnlyFieldListFilter),
-    'roma',)
+        'equipment_type', ('owner_executor', admin.RelatedOnlyFieldListFilter),
+        ('brand', admin.RelatedOnlyFieldListFilter),
+        'roma',)
     list_editable = ('owner_office', 'roma',)
 
     def get_photo(self, obj):
@@ -338,6 +339,39 @@ class EquipmentAdmin(admin.ModelAdmin):
         return '-'
 
     get_photo.short_description = 'Фото'
+
+
+class IncomingTypeAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
+class IncomingAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'id', 'title', 'created_at', 'incoming_value', 'incoming_type', 'custumer', 'company', 'schet', 'project',
+        'comment')
+    list_display_links = ('id', 'title')
+    search_fields = ['custumer', 'incoming_value', 'company', 'schet', 'project']
+    list_filter = (
+        'incoming_type', ('company', admin.RelatedOnlyFieldListFilter), ('custumer', admin.RelatedOnlyFieldListFilter),
+        ('project', admin.RelatedOnlyFieldListFilter),)
+
+
+class OutComingTargetAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
+class OutComingAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'id', 'title', 'created_at', 'outcoming_value', 'outcoming_target', 'outcoming_type', 'executor', 'company',
+        'project', 'comment')
+    list_display_links = ('id', 'title')
+    search_fields = ['executor', 'company', 'outcoming_value', 'project', 'outcoming_target', 'outcoming_type']
+    list_filter = (
+        'outcoming_type', 'outcoming_target', ('company', admin.RelatedOnlyFieldListFilter),
+        ('executor', admin.RelatedOnlyFieldListFilter),
+        ('project', admin.RelatedOnlyFieldListFilter),)
 
 
 admin.site.register(Status_project, Status_projectAdmin)
@@ -372,3 +406,7 @@ admin.site.register(Task, TaskAdmin)
 admin.site.register(EquipmentType, EquipmentTypeAdmin)
 admin.site.register(EquipmentBrand, EquipmentBrandAdmin)
 admin.site.register(Equipment, EquipmentAdmin)
+admin.site.register(IncomingType, IncomingTypeAdmin)
+admin.site.register(Incoming, IncomingAdmin)
+admin.site.register(OutComingTarget, OutComingTargetAdmin)
+admin.site.register(OutComing, OutComingAdmin)
