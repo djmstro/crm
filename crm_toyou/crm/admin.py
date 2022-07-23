@@ -69,13 +69,27 @@ class CompanyAdmin(admin.ModelAdmin):
 class CustumerAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-    'get_photo', 'name', 'last_name', 'company', 'custumer_position', 'custumer_phone', 'custumer_email', 'type_call')
+    'get_photo', 'name', 'last_name', 'company', 'custumer_position', 'custumer_phone', 'custumer_email', 'custumer_tg', 'type_call')
     list_display_links = ('name', 'last_name', 'get_photo')
-    search_fields = ['name', 'last_name', 'custumer_phone', 'custumer_email']
+    search_fields = ['name', 'last_name', 'custumer_phone', 'custumer_email', 'custumer_tg']
     readonly_fields = ('created_at', 'get_photo')
     list_filter = (('phisic_person', admin.BooleanFieldListFilter), 'company', 'custumer_position',)
     prepopulated_fields = {"slug": ("last_name",)}
     list_editable = ('type_call',)
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'last_name', 'slug', 'surname', 'custumer_photo', 'birth')
+        }),
+        ('Контактная информация', {
+            'fields': ('custumer_phone', 'custumer_email', 'custumer_tg', 'type_call')
+        }),
+        ('Компания', {
+            'fields': ('phisic_person', 'company', 'custumer_position', 'custumer_adress')
+        }),
+        ('Остальное', {
+            'fields': ('custumer_comment', 'created_at')
+        }),
+    )
 
     def get_photo(self, obj):
         if obj.custumer_photo:
@@ -84,16 +98,39 @@ class CustumerAdmin(admin.ModelAdmin):
 
     get_photo.short_description = 'Фото'
 
+class IsPaidAdmin(admin.ModelAdmin):
+    list_display = ['title']
 
 class ProjectAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        'title', 'custumer', 'created_at', 'status_project', 'get_dogovor', 'get_document_status', 'get_dogovor_price')
+        'title', 'custumer', 'created_at', 'status_project', 'is_long', 'get_dogovor', 'get_document_status', 'get_dogovor_price', 'is_paid')
     list_display_links = ('title', 'custumer')
     search_fields = ['title']
-    list_filter = ('status_project', ('custumer', admin.RelatedOnlyFieldListFilter),)
+    list_filter = ('status_project', 'is_paid', ('custumer', admin.RelatedOnlyFieldListFilter),)
     prepopulated_fields = {"slug": ("title",)}
     list_editable = ('status_project',)
+    readonly_fields = ['created_at']
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'slug', 'project_description', 'project_photo')
+        }),
+        ('Сроки', {
+            'fields': ('created_at', 'start_project', 'project_deadline')
+        }),
+        ('Заказчик, представители заказчика', {
+            'fields': ('custumer', 'in_charge', 'in_charge_phone')
+        }),
+        ('Процесс', {
+            'fields': ('status_project', 'is_long')
+        }),
+        ('Документы', {
+            'fields': ('dogovor', 'origin_tz', 'kp')
+        }),
+        ('Стоимость', {
+            'fields': ('project_cost', 'project_price', 'is_paid')
+        }),
+    )
 
     def get_photo(self, obj):
         if obj.project_photo:
@@ -103,7 +140,7 @@ class ProjectAdmin(admin.ModelAdmin):
     get_photo.short_description = 'Фото'
 
     def get_dogovor(self, obj):
-        return ", \n".join([p.dogovor_title for p in obj.dogovor.all()])
+        return ", \n".join([p.dogovor_number for p in obj.dogovor.all()])
 
     get_dogovor.short_description = 'Договор'
 
@@ -296,7 +333,30 @@ class TaskAdmin(admin.ModelAdmin):
         ('executor', admin.RelatedOnlyFieldListFilter), 'project', ('services', admin.RelatedOnlyFieldListFilter),)
     readonly_fields = ['created_at']
     list_editable = (
-    'task_start_date', 'task_deadline', 'project_task_status', 'task_type', 'final_clip_Vimeo', 'final_clip_yandex',)
+    'task_start_date', 'task_deadline', 'project_task_status',)
+    fieldsets = (
+        (None, {
+            'fields': ('project_task_title', 'priority')
+        }),
+        ('Сроки', {
+            'fields': ('created_at', 'task_start_date', 'task_deadline')
+        }),
+        ('Детальная информация', {
+            'fields': ('task_type', 'project', 'executor', 'services')
+        }),
+        ('Процесс', {
+            'fields': ['project_task_status']
+        }),
+        ('Расположение файлов', {
+            'fields': ['file_path']
+        }),
+        ('Съемка', {
+            'fields': ('location', 'parking')
+        }),
+        ('Итоговые файлы', {
+            'fields': ('final_clip_yandex', 'final_clip_Vimeo')
+        }),
+    )
 
     def get_executor(self, obj):
         return ", \n".join([p.name + " " + p.last_name for p in obj.executor.all()])
@@ -338,6 +398,20 @@ class EquipmentAdmin(admin.ModelAdmin):
         ('brand', admin.RelatedOnlyFieldListFilter),
         'roma',)
     list_editable = ('owner_office', 'roma',)
+    fieldsets = (
+        (None, {
+            'fields': ('equipment_type', 'brand', 'model', 'equipment_description', 'count', 'comment', 'equipment_photo')
+        }),
+        ('Информация о покупке', {
+            'fields': ('buy_date', 'chek_number', 'chek_date', 'sn', 'created_at')
+        }),
+        ('Владение', {
+            'fields': ('owner_executor', 'owner_arenda', 'owner_office', 'roma')
+        }),
+        ('Стоимость', {
+            'fields': ('equipment_cost', 'equipment_price', 'price', 'link')
+        }),
+    )
 
     def get_photo(self, obj):
         if obj.equipment_photo:
@@ -389,6 +463,7 @@ admin.site.register(Schet, SchetAdmin)
 admin.site.register(Akt, AktAdmin)
 admin.site.register(Dogovor, DogovorAdmin)
 admin.site.register(Custumer, CustumerAdmin)
+admin.site.register(IsPaid, IsPaidAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(ProjectTaskStatus, ProjectTaskStatusAdmin)
 admin.site.register(TaskType, TaskTypeAdmin)
