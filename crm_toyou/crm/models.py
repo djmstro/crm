@@ -485,13 +485,29 @@ class Executor(models.Model):
         verbose_name = "Исполнителя"
         verbose_name_plural = "004_Исполнители"
 
+class TypeOfArchive(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Тип диска')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Тип диска"
+        verbose_name_plural = "Типы дисков"
 
 class Archives(models.Model):
-    archives_title = models.CharField(max_length=100, verbose_name='Название архива')
+    type_of_archive = models.ForeignKey('TypeOfArchive', on_delete=models.PROTECT, related_name='archives_type',
+                              verbose_name='Тип', null=True, blank=True)
+    brand = models.ForeignKey('EquipmentBrand', on_delete=models.PROTECT, related_name='archives_brand',
+                              verbose_name='Бренд', null=True, blank=True)
+    archives_title = models.CharField(max_length=100, verbose_name='Название на диске')
+    archives_subtitle = models.CharField(max_length=100, verbose_name='Название физического диска', blank=True)
     slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
-    full_size = models.IntegerField(default=2000, verbose_name='Размер диска,МБ', blank=True)
+    full_size = models.IntegerField(default=1810, verbose_name='Размер диска,МБ', blank=True)
     sn = models.CharField(max_length=100, verbose_name='Серийный номер', blank=True)
+    archives_photo = models.ImageField(upload_to='archives_photo/', verbose_name='Фото', null=True, blank=True)
 
     def __str__(self):
         return self.archives_title

@@ -190,12 +190,25 @@ class TypeOfExecutorAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
 
+class TypeOfArchiveAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
 class ArchivesAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('archives_title', 'created_at', 'full_size', 'sn')
-    search_fields = ['archives_title']
-    readonly_fields = ['created_at']
+    list_display = ('id', 'get_photo', 'brand', 'archives_title', 'archives_subtitle', 'type_of_archive', 'created_at', 'full_size', 'sn')
+    list_display_links = ('id', 'get_photo', 'archives_title')
+    search_fields = ['archives_title', 'archives_subtitle']
+    readonly_fields = ['created_at', 'get_photo']
     prepopulated_fields = {"slug": ("archives_title",)}
+    list_filter = (('brand', admin.RelatedOnlyFieldListFilter), 'type_of_archive', 'full_size',)
+
+    def get_photo(self, obj):
+        if obj.archives_photo:
+            return mark_safe(f'<img src="{obj.archives_photo.url}" width="120">')
+        return '-'
+
+    get_photo.short_description = 'Фото'
 
 
 class DepartmentAdmin(admin.ModelAdmin):
@@ -559,6 +572,7 @@ admin.site.register(Reference, ReferenceAdmin)
 admin.site.register(CostValue, CostValueAdmin)
 admin.site.register(Executor, ExecutorAdmin)
 admin.site.register(Car, CarAdmin)
+admin.site.register(TypeOfArchive, TypeOfArchiveAdmin)
 admin.site.register(Archives, ArchivesAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(EquipmentType, EquipmentTypeAdmin)
