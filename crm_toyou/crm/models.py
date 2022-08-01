@@ -568,6 +568,16 @@ class EquipmentBrand(models.Model):
         verbose_name = "Бренд оборудования"
         verbose_name_plural = "Бренды оборудования"
 
+class EquipmentLocation(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Место хранения оборудования')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Место хранения оборудования"
+        verbose_name_plural = "Места хранения оборудованияя"
 
 class Equipment(models.Model):
     equipment_type = models.ForeignKey(EquipmentType, on_delete=models.PROTECT, related_name='equipment_type',
@@ -595,6 +605,9 @@ class Equipment(models.Model):
     price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость покупки', blank=True)
     link = models.URLField(verbose_name='Ссылка на аренду', blank=True)
     equipment_photo = models.ImageField(upload_to='equipment_photo/', verbose_name='Фото', null=True, blank=True)
+    equipment_location = models.ForeignKey(EquipmentLocation, on_delete=models.PROTECT,
+                                           related_name='equipment_location',
+                                           verbose_name='Место хранения', null=True, blank=True)
 
     def __str__(self):
         return self.model

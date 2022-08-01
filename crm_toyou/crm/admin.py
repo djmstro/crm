@@ -384,6 +384,10 @@ class EquipmentBrandAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
 
+class EquipmentLocationAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
 class EquipmentAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
@@ -525,6 +529,7 @@ admin.site.register(Archives, ArchivesAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(EquipmentType, EquipmentTypeAdmin)
 admin.site.register(EquipmentBrand, EquipmentBrandAdmin)
+admin.site.register(EquipmentLocation, EquipmentLocationAdmin)
 admin.site.register(Equipment, EquipmentAdmin)
 admin.site.register(IncomingType, IncomingTypeAdmin)
 admin.site.register(Incoming, IncomingAdmin)
