@@ -351,7 +351,7 @@ class TaskAdmin(admin.ModelAdmin):
             'fields': ['file_path']
         }),
         ('Съемка', {
-            'fields': ('location', 'parking')
+            'fields': ['location']
         }),
         ('Итоговые файлы', {
             'fields': ('final_clip_yandex', 'final_clip_Vimeo')
@@ -384,18 +384,22 @@ class EquipmentBrandAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
 
+class EquipmentLocationAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
 class EquipmentAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
         'id', 'get_photo', 'equipment_type', 'brand', 'model', 'equipment_description', 'owner_executor',
         'owner_office', 'sn', 'equipment_cost', 'equipment_price', 'link',
-        'roma', 'price')
+        'roma', 'price', 'equipment_location')
     list_display_links = ('id', 'brand', 'model', 'get_photo')
     search_fields = ['brand', 'model', 'equipment_description', 'sn']
     readonly_fields = ['created_at', 'get_photo']
     list_filter = (
         'equipment_type', ('owner_executor', admin.RelatedOnlyFieldListFilter),
-        ('brand', admin.RelatedOnlyFieldListFilter),
+        ('brand', admin.RelatedOnlyFieldListFilter), ('equipment_location', admin.RelatedOnlyFieldListFilter),
         'roma',)
     list_editable = ('owner_office', 'roma',)
     fieldsets = (
@@ -410,6 +414,9 @@ class EquipmentAdmin(admin.ModelAdmin):
         }),
         ('Стоимость', {
             'fields': ('equipment_cost', 'equipment_price', 'price', 'link')
+        }),
+        ('Место хранения', {
+            'fields': ['equipment_location']
         }),
     )
 
@@ -454,6 +461,75 @@ class OutComingAdmin(admin.ModelAdmin):
         ('project', admin.RelatedOnlyFieldListFilter),)
 
 
+class Location_typeAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
+class LocationAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'get_photo', 'id', 'title', 'created_at', 'location_adress', 'location_cost', 'location_phone', 'parking',
+        'location_type', 'location_comment')
+    list_display_links = ('get_photo', 'id', 'title', 'location_adress')
+    search_fields = ['title', 'location_adress', 'location_phone', 'location_comment']
+    readonly_fields = ['created_at', 'get_photo']
+    list_filter = (
+        ('parking', admin.RelatedOnlyFieldListFilter),
+        ('location_type', admin.RelatedOnlyFieldListFilter),)
+    list_editable = ('location_phone',)
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'location_type', 'created_at', 'location_adress', 'location_cost')
+        }),
+        ('Контактная информация', {
+            'fields': ('location_url', 'location_phone')
+        }),
+        ('Дополнительно', {
+            'fields': ('parking', 'location_comment')
+        }),
+        ('Фотографии', {
+            'fields': ('location_photo_1', 'location_photo_2', 'location_photo_3')
+        }),
+    )
+
+    def get_photo(self, obj):
+        if obj.location_photo_1:
+            return mark_safe(f'<img src="{obj.location_photo_1.url}" width="120">')
+        return '-'
+
+    get_photo.short_description = 'Фото'
+
+
+class KnowledgeBaseCategoryAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+    prepopulated_fields = {"slug": ("title",)}
+
+
+class KnowledgeBaseItemAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'id', 'get_photo', 'title', 'created_at', 'knowledge_base_category', 'author', 'is_active')
+    list_display_links = ('id', 'title', 'get_photo')
+    search_fields = ['title']
+    readonly_fields = ['created_at', 'get_photo']
+    list_filter = (
+        ('knowledge_base_category', admin.RelatedOnlyFieldListFilter),)
+    list_editable = ('is_active',)
+    fieldsets = (
+        (None, {
+            'fields': (
+            'knowledge_base_category', 'title', 'knowledge_base_photo', 'content', 'author', 'is_active', 'created_at')
+        }),
+    )
+
+    def get_photo(self, obj):
+        if obj.knowledge_base_photo:
+            return mark_safe(f'<img src="{obj.knowledge_base_photo.url}" width="120">')
+        return '-'
+
+    get_photo.short_description = 'Фото'
+
+
 admin.site.register(Status_project, Status_projectAdmin)
 admin.site.register(Type_call, Type_callAdmin)
 admin.site.register(Company, CompanyAdmin)
@@ -486,8 +562,13 @@ admin.site.register(Archives, ArchivesAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(EquipmentType, EquipmentTypeAdmin)
 admin.site.register(EquipmentBrand, EquipmentBrandAdmin)
+admin.site.register(EquipmentLocation, EquipmentLocationAdmin)
 admin.site.register(Equipment, EquipmentAdmin)
 admin.site.register(IncomingType, IncomingTypeAdmin)
 admin.site.register(Incoming, IncomingAdmin)
 admin.site.register(OutComingTarget, OutComingTargetAdmin)
 admin.site.register(OutComing, OutComingAdmin)
+admin.site.register(Location_type, Location_typeAdmin)
+admin.site.register(Location, LocationAdmin)
+admin.site.register(KnowledgeBaseCategory, KnowledgeBaseCategoryAdmin)
+admin.site.register(KnowledgeBaseItem, KnowledgeBaseItemAdmin)

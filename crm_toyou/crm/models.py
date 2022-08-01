@@ -515,7 +515,7 @@ class FilePath(models.Model):
 class Task(models.Model):
     priority = models.IntegerField(default=5, verbose_name='Приоритет')
     project_task_title = models.CharField(max_length=150, verbose_name='Задача')
-    location = models.CharField(max_length=150, verbose_name='Локация', blank=True)
+    location = models.ManyToManyField('Location', related_name='tasks_location', verbose_name='Локация', blank=True)
     services = models.ManyToManyField(Services, related_name='tasks_services', verbose_name='Услуги', blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создана')
     executor = models.ManyToManyField(Executor, related_name='tasks_executor', verbose_name='Исполнители', blank=True)
@@ -530,8 +530,6 @@ class Task(models.Model):
                                 null=True, blank=True)
     task_type = models.ForeignKey(TaskType, on_delete=models.PROTECT, related_name='task_type',
                                   verbose_name='Тип задачи', null=True, blank=True)
-    parking = models.ForeignKey(Parking, on_delete=models.PROTECT, related_name='task_parking',
-                                verbose_name='Тип парковки', null=True, blank=True)
     final_clip_Vimeo = models.URLField(verbose_name='Финальное видео Vimeo', blank=True)
     final_clip_yandex = models.URLField(verbose_name='Финальное видео ЯД', blank=True)
     comment = models.TextField(verbose_name='Комментарий', blank=True)
@@ -570,6 +568,16 @@ class EquipmentBrand(models.Model):
         verbose_name = "Бренд оборудования"
         verbose_name_plural = "Бренды оборудования"
 
+class EquipmentLocation(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Место хранения оборудования')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Место хранения оборудования"
+        verbose_name_plural = "Места хранения оборудованияя"
 
 class Equipment(models.Model):
     equipment_type = models.ForeignKey(EquipmentType, on_delete=models.PROTECT, related_name='equipment_type',
@@ -597,6 +605,9 @@ class Equipment(models.Model):
     price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость покупки', blank=True)
     link = models.URLField(verbose_name='Ссылка на аренду', blank=True)
     equipment_photo = models.ImageField(upload_to='equipment_photo/', verbose_name='Фото', null=True, blank=True)
+    equipment_location = models.ForeignKey(EquipmentLocation, on_delete=models.PROTECT,
+                                           related_name='equipment_location',
+                                           verbose_name='Место хранения', null=True, blank=True)
 
     def __str__(self):
         return self.model
@@ -681,3 +692,78 @@ class OutComing(models.Model):
         ordering = ['-created_at']
         verbose_name = "Траты"
         verbose_name_plural = "014_Траты"
+
+
+class Location_type(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Названия типа локации')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Тип локации"
+        verbose_name_plural = "Типы локации"
+
+
+class Location(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Название локации', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
+    location_adress = models.TextField(verbose_name='Адрес локации', blank=True)
+    location_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Себестоимость,₽/час',
+                                        null=True,
+                                        blank=True)
+    location_url = models.URLField(verbose_name='Ссылка на локацию', blank=True)
+    location_phone = models.CharField(max_length=100, verbose_name='Контактный телефон', blank=True)
+    parking = models.ForeignKey(Parking, on_delete=models.PROTECT, related_name='location_parking',
+                                verbose_name='Тип парковки', null=True, blank=True)
+    location_type = models.ForeignKey(Location_type, on_delete=models.PROTECT, related_name='location_type',
+                                      verbose_name='Тип локации', null=True, blank=True)
+    location_comment = models.TextField(verbose_name='Комментарий', blank=True)
+    location_photo_1 = models.ImageField(upload_to='locations/', verbose_name='Фото 1', null=True, blank=True)
+    location_photo_2 = models.ImageField(upload_to='locations/', verbose_name='Фото 2', null=True, blank=True)
+    location_photo_3 = models.ImageField(upload_to='locations/', verbose_name='Фото 3', null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Локацию"
+        verbose_name_plural = "015_Локации"
+
+
+class KnowledgeBaseCategory(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Название категории')
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Категория базы знаний"
+        verbose_name_plural = "Категории базы знаний"
+
+
+class KnowledgeBaseItem(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Название статьи')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    content = models.TextField(verbose_name='Текст', blank=True)
+    knowledge_base_photo = models.ImageField(upload_to='photos/knowledge_base/%Y/%m/%d/', verbose_name='Фото',
+                                             blank=True)
+    knowledge_base_category = models.ForeignKey(KnowledgeBaseCategory, on_delete=models.PROTECT,
+                                                related_name='knowledge_base_category',
+                                                verbose_name='Категория базы знаний',
+                                                null=True, blank=True)
+    author = models.ForeignKey(Executor, on_delete=models.PROTECT, related_name='knowledge_base_executor',
+                               verbose_name='Автор')
+    is_active = models.BooleanField(verbose_name='Опубликовано')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Статью базы знаний"
+        verbose_name_plural = "016_База знаний"
