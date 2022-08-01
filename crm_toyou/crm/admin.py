@@ -404,10 +404,10 @@ class EquipmentAdmin(admin.ModelAdmin):
     list_editable = ('owner_office', 'roma',)
     fieldsets = (
         (None, {
-            'fields': ('equipment_type', 'brand', 'model', 'equipment_description', 'count', 'comment', 'equipment_photo')
+            'fields': ('equipment_type', 'brand', 'model', 'equipment_description', 'count', 'defect', 'additional', 'comment', 'equipment_photo')
         }),
         ('Информация о покупке', {
-            'fields': ('buy_date', 'chek_number', 'chek_date', 'sn', 'created_at')
+            'fields': ('sn', 'buy_date', 'chek_number', 'chek_date', 'created_at')
         }),
         ('Владение', {
             'fields': ('owner_executor', 'owner_arenda', 'owner_office', 'roma')
