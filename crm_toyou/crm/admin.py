@@ -544,6 +544,46 @@ class KnowledgeBaseItemAdmin(admin.ModelAdmin):
     get_photo.short_description = 'Фото'
 
 
+class SubscriptionPlanAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
+class ProgramItemAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'id', 'title', 'program_login', 'program_password', 'get_computers', 'program_license', 'activation_date', 'activation_for', 'subscription_plan', 'program_cost')
+    list_display_links = ('id', 'title')
+    search_fields = ['title']
+    readonly_fields = ['created_at']
+
+    def get_computers(self, obj):
+        return ", \n".join([p.title for p in obj.computers.all()])
+
+    get_computers.short_description = 'Компьютеры'
+
+
+class ComputersAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'get_photo', 'id', 'title', 'executor', 'videocard', 'get_hdd')
+    list_display_links = ('get_photo', 'id', 'title')
+    search_fields = ['title']
+    readonly_fields = ['created_at', 'get_photo']
+    list_filter = [('executor', admin.RelatedOnlyFieldListFilter),]
+
+    def get_photo(self, obj):
+        if obj.computer_photo:
+            return mark_safe(f'<img src="{obj.computer_photo.url}" width="120">')
+        return '-'
+
+    get_photo.short_description = 'Фото'
+
+    def get_hdd(self, obj):
+        return ", \n".join([p.archives_title for p in obj.hdd.all()])
+
+    get_hdd.short_description = 'Жесткие диски'
+
+
 admin.site.register(StatusProject, StatusProjectAdmin)
 admin.site.register(TypeCall, TypeCallAdmin)
 admin.site.register(Company, CompanyAdmin)
@@ -587,3 +627,6 @@ admin.site.register(LocationType, LocationTypeAdmin)
 admin.site.register(Location, LocationAdmin)
 admin.site.register(KnowledgeBaseCategory, KnowledgeBaseCategoryAdmin)
 admin.site.register(KnowledgeBaseItem, KnowledgeBaseItemAdmin)
+admin.site.register(SubscriptionPlan, SubscriptionPlanAdmin)
+admin.site.register(ProgramItem, ProgramItemAdmin)
+admin.site.register(Computers, ComputersAdmin)

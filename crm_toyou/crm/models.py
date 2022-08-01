@@ -794,3 +794,81 @@ class KnowledgeBaseItem(models.Model):
         ordering = ['-created_at']
         verbose_name = "Статью базы знаний"
         verbose_name_plural = "016_База знаний"
+
+
+class SubscriptionPlan(models.Model):
+    title = models.CharField(max_length=100, verbose_name='План подписки')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "План подписки"
+        verbose_name_plural = "Планы подписки"
+
+
+class ProgramItem(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Название программы/сервиса', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    program_login = models.CharField(max_length=150, verbose_name='Логин', blank=True)
+    program_password = models.CharField(max_length=150, verbose_name='Пароль', blank=True)
+    program_license = models.TextField(verbose_name='Лицензия', blank=True)
+    activation_date = models.DateField(verbose_name='Дата активации', null=True, blank=True)
+    activation_for = models.DateField(verbose_name='Дата окончания подписки', null=True, blank=True)
+    subscription_plan = models.ForeignKey(SubscriptionPlan, on_delete=models.PROTECT, related_name='knowledge_base_executor',
+                               verbose_name='План подписки')
+    program_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость,₽',
+                                         blank=True)
+    computers = models.ManyToManyField('Computers', related_name='program_computers', verbose_name='Компьютеры', blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Программу"
+        verbose_name_plural = "017_Программы и сервисы"
+
+
+class Computers(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Название компьютера', blank=True)
+    subtitle = models.CharField(max_length=150, verbose_name='Физическое название компьютера', blank=True)
+    computer_password = models.CharField(max_length=150, verbose_name='Пароль', blank=True)
+    windows_license = models.TextField(verbose_name='Лицензия Windows', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    cpu = models.CharField(max_length=150, verbose_name='Процессор', blank=True)
+    cpu_sn = models.CharField(max_length=150, verbose_name='Процессор s/n', blank=True)
+    motherboard = models.CharField(max_length=150, verbose_name='Материнская плата', blank=True)
+    motherboard_sn = models.CharField(max_length=150, verbose_name='Материнская плата s/n', blank=True)
+    ram_1 = models.CharField(max_length=150, verbose_name='Оперативная память 1', blank=True)
+    ram_1_sn = models.CharField(max_length=150, verbose_name='Оперативная память 1 s/n', blank=True)
+    ram_2 = models.CharField(max_length=150, verbose_name='Оперативная память 2', blank=True)
+    ram_2_sn = models.CharField(max_length=150, verbose_name='Оперативная память 2 s/n', blank=True)
+    ram_3 = models.CharField(max_length=150, verbose_name='Оперативная память 3', blank=True)
+    ram_3_sn = models.CharField(max_length=150, verbose_name='Оперативная память 3 s/n', blank=True)
+    ram_4 = models.CharField(max_length=150, verbose_name='Оперативная память 4', blank=True)
+    ram_4_sn = models.CharField(max_length=150, verbose_name='Оперативная память 4 s/n', blank=True)
+    videocard = models.CharField(max_length=150, verbose_name='Видеокарта', blank=True)
+    videocard_sn = models.CharField(max_length=150, verbose_name='Видеокарта s/n', blank=True)
+    power = models.CharField(max_length=150, verbose_name='Блок питания', blank=True)
+    power_sn = models.CharField(max_length=150, verbose_name='Блок питания s/n', blank=True)
+    wi_fi_module = models.BooleanField(verbose_name='Wi-fi модуль')
+    hdd = models.ManyToManyField(Archives, related_name='computers_archives', verbose_name='Жесткие диски', blank=True)
+    computer_photo = models.ImageField(upload_to='computers/', verbose_name='Фото', null=True, blank=True)
+    monitor = models.CharField(max_length=150, verbose_name='Монитор', blank=True)
+    monitor_sn = models.CharField(max_length=150, verbose_name='Монитор s/n', blank=True)
+    keyboard = models.CharField(max_length=150, verbose_name='Клавиатура', blank=True)
+    keyboard_sn = models.CharField(max_length=150, verbose_name='Клавиатура s/n', blank=True)
+    mouse = models.CharField(max_length=150, verbose_name='Мышь s/n', blank=True)
+    mouse_sn = models.CharField(max_length=150, verbose_name='Мышь s/n', blank=True)
+    executor = models.ForeignKey(Executor, on_delete=models.PROTECT, related_name='computers_executor',
+                                  verbose_name='Исполнитель', null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Компьютер"
+        verbose_name_plural = "018_Компьютеры"
