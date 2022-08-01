@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Status_project(models.Model):
+class StatusProject(models.Model):
     title = models.CharField(max_length=100, verbose_name='Статус')
 
     def __str__(self):
@@ -13,7 +13,7 @@ class Status_project(models.Model):
         verbose_name_plural = "Статусы проектов"
 
 
-class Type_call(models.Model):
+class TypeCall(models.Model):
     title = models.CharField(max_length=100, verbose_name='Тип связи')
 
     def __str__(self):
@@ -67,7 +67,7 @@ class Custumer(models.Model):
     custumer_phone = models.CharField(max_length=20, verbose_name='Телефон', blank=True)
     custumer_email = models.EmailField(verbose_name='E-mail', blank=True)
     custumer_tg = models.CharField(max_length=100, verbose_name='Телеграм', blank=True)
-    type_call = models.ForeignKey(Type_call, on_delete=models.PROTECT, related_name='custumers',
+    type_call = models.ForeignKey(TypeCall, on_delete=models.PROTECT, related_name='custumers',
                                   verbose_name='Тип связи', null=True, blank=True)
     custumer_photo = models.ImageField(upload_to='photos/catalog/%Y/%m/%d/', verbose_name='Фото', null=True, blank=True)
     custumer_position = models.CharField(max_length=150, verbose_name='Должность', blank=True)
@@ -177,6 +177,7 @@ class Akt(models.Model):
         verbose_name = "Акт"
         verbose_name_plural = "010_Акты"
 
+
 class IsPaid(models.Model):
     title = models.CharField(max_length=100, verbose_name='Статус оплаты')
 
@@ -187,6 +188,7 @@ class IsPaid(models.Model):
         ordering = ['id']
         verbose_name = "Статус оплаты"
         verbose_name_plural = "Статусы оплаты"
+
 
 class Project(models.Model):
     title = models.CharField(max_length=150, verbose_name='Название')
@@ -200,15 +202,18 @@ class Project(models.Model):
                                  null=True, blank=True)
     in_charge = models.CharField(max_length=150, verbose_name='Представитель Заказчика', blank=True)
     in_charge_phone = models.CharField(max_length=150, verbose_name='Телефон представителя', blank=True)
-    status_project = models.ForeignKey(Status_project, on_delete=models.PROTECT, related_name='projects',
+    status_project = models.ForeignKey(StatusProject, on_delete=models.PROTECT, related_name='projects',
                                        verbose_name='Статус')
     is_long = models.BooleanField(verbose_name='Длительный')
     dogovor = models.ManyToManyField(Dogovor, related_name='dogovors', verbose_name='Договор', blank=True)
     origin_tz = models.FileField(upload_to='docs/tz/', verbose_name='Техническое задание', null=True, blank=True)
     kp = models.FileField(upload_to='docs/kp/', verbose_name='Коммерческое предложение', null=True, blank=True)
-    project_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Себестоимость', null=True, blank=True)
-    project_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость', null=True, blank=True)
-    is_paid = models.ForeignKey(IsPaid, on_delete=models.PROTECT, related_name='projects_is_paid', verbose_name='Статус оплаты', null=True, blank=True)
+    project_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Себестоимость',
+                                       null=True, blank=True)
+    project_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость', null=True,
+                                        blank=True)
+    is_paid = models.ForeignKey(IsPaid, on_delete=models.PROTECT, related_name='projects_is_paid',
+                                verbose_name='Статус оплаты', null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -415,6 +420,7 @@ class Reference(models.Model):
         verbose_name = "Референс"
         verbose_name_plural = "Референсы"
 
+
 class CostValue(models.Model):
     title = models.CharField(max_length=150, verbose_name='Ед.измерения')
 
@@ -425,6 +431,7 @@ class CostValue(models.Model):
         ordering = ['id']
         verbose_name = "Единицу измерения"
         verbose_name_plural = "Единицы измерения"
+
 
 class Executor(models.Model):
     name = models.CharField(max_length=100, verbose_name='Имя', blank=True)
@@ -568,6 +575,7 @@ class EquipmentBrand(models.Model):
         verbose_name = "Бренд оборудования"
         verbose_name_plural = "Бренды оборудования"
 
+
 class EquipmentLocation(models.Model):
     title = models.CharField(max_length=100, verbose_name='Место хранения оборудования')
 
@@ -579,6 +587,7 @@ class EquipmentLocation(models.Model):
         verbose_name = "Место хранения оборудования"
         verbose_name_plural = "Места хранения оборудованияя"
 
+
 class Equipment(models.Model):
     equipment_type = models.ForeignKey(EquipmentType, on_delete=models.PROTECT, related_name='equipment_type',
                                        verbose_name='Тип оборудования', null=True, blank=True)
@@ -588,7 +597,7 @@ class Equipment(models.Model):
     equipment_description = models.TextField(verbose_name='Описание', blank=True)
     comment = models.TextField(verbose_name='Комментарий', blank=True)
     defect = models.TextField(verbose_name='Состояние/дефекты', blank=True)
-    additional = models.TextField(verbose_name='Комплектация/ дополнительное оборудование', blank=True)
+    additional = models.TextField(verbose_name='Комплектация', blank=True)
     buy_date = models.DateField(verbose_name='Дата покупки по чеку', null=True, blank=True)
     chek_number = models.CharField(max_length=150, verbose_name='Номер документа', blank=True)
     chek_date = models.DateField(verbose_name='Дата документа', null=True, blank=True)
@@ -696,7 +705,7 @@ class OutComing(models.Model):
         verbose_name_plural = "014_Траты"
 
 
-class Location_type(models.Model):
+class LocationType(models.Model):
     title = models.CharField(max_length=100, verbose_name='Названия типа локации')
 
     def __str__(self):
@@ -719,7 +728,7 @@ class Location(models.Model):
     location_phone = models.CharField(max_length=100, verbose_name='Контактный телефон', blank=True)
     parking = models.ForeignKey(Parking, on_delete=models.PROTECT, related_name='location_parking',
                                 verbose_name='Тип парковки', null=True, blank=True)
-    location_type = models.ForeignKey(Location_type, on_delete=models.PROTECT, related_name='location_type',
+    location_type = models.ForeignKey(LocationType, on_delete=models.PROTECT, related_name='location_type',
                                       verbose_name='Тип локации', null=True, blank=True)
     location_comment = models.TextField(verbose_name='Комментарий', blank=True)
     location_photo_1 = models.ImageField(upload_to='locations/', verbose_name='Фото 1', null=True, blank=True)
