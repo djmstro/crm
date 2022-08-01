@@ -587,6 +587,8 @@ class Equipment(models.Model):
     model = models.CharField(max_length=100, verbose_name='Модель', blank=True)
     equipment_description = models.TextField(verbose_name='Описание', blank=True)
     comment = models.TextField(verbose_name='Комментарий', blank=True)
+    defect = models.TextField(verbose_name='Состояние/дефекты', blank=True)
+    additional = models.TextField(verbose_name='Комплектация/ дополнительное оборудование', blank=True)
     buy_date = models.DateField(verbose_name='Дата покупки по чеку', null=True, blank=True)
     chek_number = models.CharField(max_length=150, verbose_name='Номер документа', blank=True)
     chek_date = models.DateField(verbose_name='Дата документа', null=True, blank=True)
