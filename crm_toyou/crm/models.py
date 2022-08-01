@@ -853,6 +853,7 @@ class Computers(models.Model):
     videocard_sn = models.CharField(max_length=150, verbose_name='Видеокарта s/n', blank=True)
     power = models.CharField(max_length=150, verbose_name='Блок питания', blank=True)
     power_sn = models.CharField(max_length=150, verbose_name='Блок питания s/n', blank=True)
+    corpus = models.CharField(max_length=150, verbose_name='Корпус', blank=True)
     wi_fi_module = models.BooleanField(verbose_name='Wi-fi модуль')
     hdd = models.ManyToManyField(Archives, related_name='computers_archives', verbose_name='Жесткие диски', blank=True)
     computer_photo = models.ImageField(upload_to='computers/', verbose_name='Фото', null=True, blank=True)
