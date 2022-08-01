@@ -393,13 +393,13 @@ class EquipmentAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'get_photo', 'equipment_type', 'brand', 'model', 'equipment_description', 'owner_executor',
         'owner_office', 'sn', 'equipment_cost', 'equipment_price', 'link',
-        'roma', 'price')
+        'roma', 'price', 'equipment_location')
     list_display_links = ('id', 'brand', 'model', 'get_photo')
     search_fields = ['brand', 'model', 'equipment_description', 'sn']
     readonly_fields = ['created_at', 'get_photo']
     list_filter = (
         'equipment_type', ('owner_executor', admin.RelatedOnlyFieldListFilter),
-        ('brand', admin.RelatedOnlyFieldListFilter),
+        ('brand', admin.RelatedOnlyFieldListFilter), ('equipment_location', admin.RelatedOnlyFieldListFilter),
         'roma',)
     list_editable = ('owner_office', 'roma',)
     fieldsets = (
@@ -414,6 +414,9 @@ class EquipmentAdmin(admin.ModelAdmin):
         }),
         ('Стоимость', {
             'fields': ('equipment_cost', 'equipment_price', 'price', 'link')
+        }),
+        ('Место хранения', {
+            'fields': ['equipment_location']
         }),
     )
 
