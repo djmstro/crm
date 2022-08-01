@@ -500,6 +500,36 @@ class LocationAdmin(admin.ModelAdmin):
     get_photo.short_description = 'Фото'
 
 
+class KnowledgeBaseCategoryAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+    prepopulated_fields = {"slug": ("title",)}
+
+
+class KnowledgeBaseItemAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'id', 'get_photo', 'title', 'created_at', 'knowledge_base_category', 'author', 'is_active')
+    list_display_links = ('id', 'title', 'get_photo')
+    search_fields = ['title']
+    readonly_fields = ['created_at', 'get_photo']
+    list_filter = (
+        ('knowledge_base_category', admin.RelatedOnlyFieldListFilter),)
+    list_editable = ('is_active',)
+    fieldsets = (
+        (None, {
+            'fields': (
+            'knowledge_base_category', 'title', 'knowledge_base_photo', 'content', 'author', 'is_active', 'created_at')
+        }),
+    )
+
+    def get_photo(self, obj):
+        if obj.knowledge_base_photo:
+            return mark_safe(f'<img src="{obj.knowledge_base_photo.url}" width="120">')
+        return '-'
+
+    get_photo.short_description = 'Фото'
+
+
 admin.site.register(Status_project, Status_projectAdmin)
 admin.site.register(Type_call, Type_callAdmin)
 admin.site.register(Company, CompanyAdmin)
@@ -540,3 +570,5 @@ admin.site.register(OutComingTarget, OutComingTargetAdmin)
 admin.site.register(OutComing, OutComingAdmin)
 admin.site.register(Location_type, Location_typeAdmin)
 admin.site.register(Location, LocationAdmin)
+admin.site.register(KnowledgeBaseCategory, KnowledgeBaseCategoryAdmin)
+admin.site.register(KnowledgeBaseItem, KnowledgeBaseItemAdmin)

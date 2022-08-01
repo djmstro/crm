@@ -731,3 +731,39 @@ class Location(models.Model):
         ordering = ['id']
         verbose_name = "Локацию"
         verbose_name_plural = "015_Локации"
+
+
+class KnowledgeBaseCategory(models.Model):
+    title = models.CharField(max_length=100, verbose_name='Название категории')
+    slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Категория базы знаний"
+        verbose_name_plural = "Категории базы знаний"
+
+
+class KnowledgeBaseItem(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Название статьи')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    content = models.TextField(verbose_name='Текст', blank=True)
+    knowledge_base_photo = models.ImageField(upload_to='photos/knowledge_base/%Y/%m/%d/', verbose_name='Фото',
+                                             blank=True)
+    knowledge_base_category = models.ForeignKey(KnowledgeBaseCategory, on_delete=models.PROTECT,
+                                                related_name='knowledge_base_category',
+                                                verbose_name='Категория базы знаний',
+                                                null=True, blank=True)
+    author = models.ForeignKey(Executor, on_delete=models.PROTECT, related_name='knowledge_base_executor',
+                               verbose_name='Автор')
+    is_active = models.BooleanField(verbose_name='Опубликовано')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Статью базы знаний"
+        verbose_name_plural = "016_База знаний"
