@@ -351,7 +351,7 @@ class TaskAdmin(admin.ModelAdmin):
             'fields': ['file_path']
         }),
         ('Съемка', {
-            'fields': ('location', 'parking')
+            'fields': ['location']
         }),
         ('Итоговые файлы', {
             'fields': ('final_clip_yandex', 'final_clip_Vimeo')
@@ -454,6 +454,45 @@ class OutComingAdmin(admin.ModelAdmin):
         ('project', admin.RelatedOnlyFieldListFilter),)
 
 
+class Location_typeAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+
+
+class LocationAdmin(admin.ModelAdmin):
+    save_on_top = True
+    list_display = (
+        'get_photo', 'id', 'title', 'created_at', 'location_adress', 'location_cost', 'location_phone', 'parking',
+        'location_type', 'location_comment')
+    list_display_links = ('get_photo', 'id', 'title', 'location_adress')
+    search_fields = ['title', 'location_adress', 'location_phone', 'location_comment']
+    readonly_fields = ['created_at', 'get_photo']
+    list_filter = (
+        ('parking', admin.RelatedOnlyFieldListFilter),
+        ('location_type', admin.RelatedOnlyFieldListFilter),)
+    list_editable = ('location_phone',)
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'location_type', 'created_at', 'location_adress', 'location_cost')
+        }),
+        ('Контактная информация', {
+            'fields': ('location_url', 'location_phone')
+        }),
+        ('Дополнительно', {
+            'fields': ('parking', 'location_comment')
+        }),
+        ('Фотографии', {
+            'fields': ('location_photo_1', 'location_photo_2', 'location_photo_3')
+        }),
+    )
+
+    def get_photo(self, obj):
+        if obj.location_photo_1:
+            return mark_safe(f'<img src="{obj.location_photo_1.url}" width="120">')
+        return '-'
+
+    get_photo.short_description = 'Фото'
+
+
 admin.site.register(Status_project, Status_projectAdmin)
 admin.site.register(Type_call, Type_callAdmin)
 admin.site.register(Company, CompanyAdmin)
@@ -491,3 +530,5 @@ admin.site.register(IncomingType, IncomingTypeAdmin)
 admin.site.register(Incoming, IncomingAdmin)
 admin.site.register(OutComingTarget, OutComingTargetAdmin)
 admin.site.register(OutComing, OutComingAdmin)
+admin.site.register(Location_type, Location_typeAdmin)
+admin.site.register(Location, LocationAdmin)
