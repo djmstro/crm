@@ -534,6 +534,7 @@ class Task(models.Model):
                                 verbose_name='Тип парковки', null=True, blank=True)
     final_clip_Vimeo = models.URLField(verbose_name='Финальное видео Vimeo', blank=True)
     final_clip_yandex = models.URLField(verbose_name='Финальное видео ЯД', blank=True)
+    comment = models.TextField(verbose_name='Комментарий', blank=True)
 
     def __str__(self):
         return self.project_task_title

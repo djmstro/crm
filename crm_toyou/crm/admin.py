@@ -324,7 +324,7 @@ class TaskAdmin(admin.ModelAdmin):
         'id', 'project_task_title', 'project', 'get_executor', 'created_at', 'priority', 'task_start_date',
         'task_deadline',
         'project_task_status',
-        'task_type', 'get_archive', 'get_file_path', 'final_clip_Vimeo', 'final_clip_yandex')
+        'task_type', 'get_archive', 'get_file_path', 'comment', 'final_clip_Vimeo', 'final_clip_yandex')
     list_display_links = ('id', 'project_task_title')
     search_fields = ['project_task_title']
     list_filter = (
@@ -336,7 +336,7 @@ class TaskAdmin(admin.ModelAdmin):
     'task_start_date', 'task_deadline', 'project_task_status',)
     fieldsets = (
         (None, {
-            'fields': ('project_task_title', 'priority')
+            'fields': ('project_task_title', 'priority', 'comment')
         }),
         ('Сроки', {
             'fields': ('created_at', 'task_start_date', 'task_deadline')
