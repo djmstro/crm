@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Status_project(models.Model):
+class StatusProject(models.Model):
     title = models.CharField(max_length=100, verbose_name='Статус')
 
     def __str__(self):
@@ -13,7 +13,7 @@ class Status_project(models.Model):
         verbose_name_plural = "Статусы проектов"
 
 
-class Type_call(models.Model):
+class TypeCall(models.Model):
     title = models.CharField(max_length=100, verbose_name='Тип связи')
 
     def __str__(self):
@@ -67,7 +67,7 @@ class Custumer(models.Model):
     custumer_phone = models.CharField(max_length=20, verbose_name='Телефон', blank=True)
     custumer_email = models.EmailField(verbose_name='E-mail', blank=True)
     custumer_tg = models.CharField(max_length=100, verbose_name='Телеграм', blank=True)
-    type_call = models.ForeignKey(Type_call, on_delete=models.PROTECT, related_name='custumers',
+    type_call = models.ForeignKey(TypeCall, on_delete=models.PROTECT, related_name='custumers',
                                   verbose_name='Тип связи', null=True, blank=True)
     custumer_photo = models.ImageField(upload_to='photos/catalog/%Y/%m/%d/', verbose_name='Фото', null=True, blank=True)
     custumer_position = models.CharField(max_length=150, verbose_name='Должность', blank=True)
@@ -177,6 +177,7 @@ class Akt(models.Model):
         verbose_name = "Акт"
         verbose_name_plural = "010_Акты"
 
+
 class IsPaid(models.Model):
     title = models.CharField(max_length=100, verbose_name='Статус оплаты')
 
@@ -187,6 +188,7 @@ class IsPaid(models.Model):
         ordering = ['id']
         verbose_name = "Статус оплаты"
         verbose_name_plural = "Статусы оплаты"
+
 
 class Project(models.Model):
     title = models.CharField(max_length=150, verbose_name='Название')
@@ -200,15 +202,18 @@ class Project(models.Model):
                                  null=True, blank=True)
     in_charge = models.CharField(max_length=150, verbose_name='Представитель Заказчика', blank=True)
     in_charge_phone = models.CharField(max_length=150, verbose_name='Телефон представителя', blank=True)
-    status_project = models.ForeignKey(Status_project, on_delete=models.PROTECT, related_name='projects',
+    status_project = models.ForeignKey(StatusProject, on_delete=models.PROTECT, related_name='projects',
                                        verbose_name='Статус')
     is_long = models.BooleanField(verbose_name='Длительный')
     dogovor = models.ManyToManyField(Dogovor, related_name='dogovors', verbose_name='Договор', blank=True)
     origin_tz = models.FileField(upload_to='docs/tz/', verbose_name='Техническое задание', null=True, blank=True)
     kp = models.FileField(upload_to='docs/kp/', verbose_name='Коммерческое предложение', null=True, blank=True)
-    project_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Себестоимость', null=True, blank=True)
-    project_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость', null=True, blank=True)
-    is_paid = models.ForeignKey(IsPaid, on_delete=models.PROTECT, related_name='projects_is_paid', verbose_name='Статус оплаты', null=True, blank=True)
+    project_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Себестоимость',
+                                       null=True, blank=True)
+    project_price = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость', null=True,
+                                        blank=True)
+    is_paid = models.ForeignKey(IsPaid, on_delete=models.PROTECT, related_name='projects_is_paid',
+                                verbose_name='Статус оплаты', null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -415,6 +420,7 @@ class Reference(models.Model):
         verbose_name = "Референс"
         verbose_name_plural = "Референсы"
 
+
 class CostValue(models.Model):
     title = models.CharField(max_length=150, verbose_name='Ед.измерения')
 
@@ -425,6 +431,7 @@ class CostValue(models.Model):
         ordering = ['id']
         verbose_name = "Единицу измерения"
         verbose_name_plural = "Единицы измерения"
+
 
 class Executor(models.Model):
     name = models.CharField(max_length=100, verbose_name='Имя', blank=True)
@@ -478,13 +485,29 @@ class Executor(models.Model):
         verbose_name = "Исполнителя"
         verbose_name_plural = "004_Исполнители"
 
+class TypeOfArchive(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Тип диска')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "Тип диска"
+        verbose_name_plural = "Типы дисков"
 
 class Archives(models.Model):
-    archives_title = models.CharField(max_length=100, verbose_name='Название архива')
+    type_of_archive = models.ForeignKey('TypeOfArchive', on_delete=models.PROTECT, related_name='archives_type',
+                              verbose_name='Тип', null=True, blank=True)
+    brand = models.ForeignKey('EquipmentBrand', on_delete=models.PROTECT, related_name='archives_brand',
+                              verbose_name='Бренд', null=True, blank=True)
+    archives_title = models.CharField(max_length=100, verbose_name='Название на диске')
+    archives_subtitle = models.CharField(max_length=100, verbose_name='Название физического диска', blank=True)
     slug = models.SlugField(max_length=100, verbose_name='Url', unique=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
-    full_size = models.IntegerField(default=2000, verbose_name='Размер диска,МБ', blank=True)
+    full_size = models.IntegerField(default=1810, verbose_name='Размер диска,МБ', blank=True)
     sn = models.CharField(max_length=100, verbose_name='Серийный номер', blank=True)
+    archives_photo = models.ImageField(upload_to='archives_photo/', verbose_name='Фото', null=True, blank=True)
 
     def __str__(self):
         return self.archives_title
@@ -568,6 +591,7 @@ class EquipmentBrand(models.Model):
         verbose_name = "Бренд оборудования"
         verbose_name_plural = "Бренды оборудования"
 
+
 class EquipmentLocation(models.Model):
     title = models.CharField(max_length=100, verbose_name='Место хранения оборудования')
 
@@ -579,6 +603,7 @@ class EquipmentLocation(models.Model):
         verbose_name = "Место хранения оборудования"
         verbose_name_plural = "Места хранения оборудованияя"
 
+
 class Equipment(models.Model):
     equipment_type = models.ForeignKey(EquipmentType, on_delete=models.PROTECT, related_name='equipment_type',
                                        verbose_name='Тип оборудования', null=True, blank=True)
@@ -587,6 +612,8 @@ class Equipment(models.Model):
     model = models.CharField(max_length=100, verbose_name='Модель', blank=True)
     equipment_description = models.TextField(verbose_name='Описание', blank=True)
     comment = models.TextField(verbose_name='Комментарий', blank=True)
+    defect = models.TextField(verbose_name='Состояние/дефекты', blank=True)
+    additional = models.TextField(verbose_name='Комплектация', blank=True)
     buy_date = models.DateField(verbose_name='Дата покупки по чеку', null=True, blank=True)
     chek_number = models.CharField(max_length=150, verbose_name='Номер документа', blank=True)
     chek_date = models.DateField(verbose_name='Дата документа', null=True, blank=True)
@@ -694,7 +721,7 @@ class OutComing(models.Model):
         verbose_name_plural = "014_Траты"
 
 
-class Location_type(models.Model):
+class LocationType(models.Model):
     title = models.CharField(max_length=100, verbose_name='Названия типа локации')
 
     def __str__(self):
@@ -717,7 +744,7 @@ class Location(models.Model):
     location_phone = models.CharField(max_length=100, verbose_name='Контактный телефон', blank=True)
     parking = models.ForeignKey(Parking, on_delete=models.PROTECT, related_name='location_parking',
                                 verbose_name='Тип парковки', null=True, blank=True)
-    location_type = models.ForeignKey(Location_type, on_delete=models.PROTECT, related_name='location_type',
+    location_type = models.ForeignKey(LocationType, on_delete=models.PROTECT, related_name='location_type',
                                       verbose_name='Тип локации', null=True, blank=True)
     location_comment = models.TextField(verbose_name='Комментарий', blank=True)
     location_photo_1 = models.ImageField(upload_to='locations/', verbose_name='Фото 1', null=True, blank=True)
@@ -767,3 +794,82 @@ class KnowledgeBaseItem(models.Model):
         ordering = ['-created_at']
         verbose_name = "Статью базы знаний"
         verbose_name_plural = "016_База знаний"
+
+
+class SubscriptionPlan(models.Model):
+    title = models.CharField(max_length=100, verbose_name='План подписки')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = "План подписки"
+        verbose_name_plural = "Планы подписки"
+
+
+class ProgramItem(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Название программы/сервиса', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    program_login = models.CharField(max_length=150, verbose_name='Логин', blank=True)
+    program_password = models.CharField(max_length=150, verbose_name='Пароль', blank=True)
+    program_license = models.TextField(verbose_name='Лицензия', blank=True)
+    activation_date = models.DateField(verbose_name='Дата активации', null=True, blank=True)
+    activation_for = models.DateField(verbose_name='Дата окончания подписки', null=True, blank=True)
+    subscription_plan = models.ForeignKey(SubscriptionPlan, on_delete=models.PROTECT, related_name='knowledge_base_executor',
+                               verbose_name='План подписки')
+    program_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость,₽',
+                                         blank=True)
+    computers = models.ManyToManyField('Computers', related_name='program_computers', verbose_name='Компьютеры', blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Программу"
+        verbose_name_plural = "017_Программы и сервисы"
+
+
+class Computers(models.Model):
+    title = models.CharField(max_length=150, verbose_name='Название компьютера', blank=True)
+    subtitle = models.CharField(max_length=150, verbose_name='Физическое название компьютера', blank=True)
+    computer_password = models.CharField(max_length=150, verbose_name='Пароль', blank=True)
+    windows_license = models.TextField(verbose_name='Лицензия Windows', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    cpu = models.CharField(max_length=150, verbose_name='Процессор', blank=True)
+    cpu_sn = models.CharField(max_length=150, verbose_name='Процессор s/n', blank=True)
+    motherboard = models.CharField(max_length=150, verbose_name='Материнская плата', blank=True)
+    motherboard_sn = models.CharField(max_length=150, verbose_name='Материнская плата s/n', blank=True)
+    ram_1 = models.CharField(max_length=150, verbose_name='Оперативная память 1', blank=True)
+    ram_1_sn = models.CharField(max_length=150, verbose_name='Оперативная память 1 s/n', blank=True)
+    ram_2 = models.CharField(max_length=150, verbose_name='Оперативная память 2', blank=True)
+    ram_2_sn = models.CharField(max_length=150, verbose_name='Оперативная память 2 s/n', blank=True)
+    ram_3 = models.CharField(max_length=150, verbose_name='Оперативная память 3', blank=True)
+    ram_3_sn = models.CharField(max_length=150, verbose_name='Оперативная память 3 s/n', blank=True)
+    ram_4 = models.CharField(max_length=150, verbose_name='Оперативная память 4', blank=True)
+    ram_4_sn = models.CharField(max_length=150, verbose_name='Оперативная память 4 s/n', blank=True)
+    videocard = models.CharField(max_length=150, verbose_name='Видеокарта', blank=True)
+    videocard_sn = models.CharField(max_length=150, verbose_name='Видеокарта s/n', blank=True)
+    power = models.CharField(max_length=150, verbose_name='Блок питания', blank=True)
+    power_sn = models.CharField(max_length=150, verbose_name='Блок питания s/n', blank=True)
+    corpus = models.CharField(max_length=150, verbose_name='Корпус', blank=True)
+    wi_fi_module = models.BooleanField(verbose_name='Wi-fi модуль')
+    hdd = models.ManyToManyField(Archives, related_name='computers_archives', verbose_name='Жесткие диски', blank=True)
+    computer_photo = models.ImageField(upload_to='computers/', verbose_name='Фото', null=True, blank=True)
+    monitor = models.CharField(max_length=150, verbose_name='Монитор', blank=True)
+    monitor_sn = models.CharField(max_length=150, verbose_name='Монитор s/n', blank=True)
+    keyboard = models.CharField(max_length=150, verbose_name='Клавиатура', blank=True)
+    keyboard_sn = models.CharField(max_length=150, verbose_name='Клавиатура s/n', blank=True)
+    mouse = models.CharField(max_length=150, verbose_name='Мышь s/n', blank=True)
+    mouse_sn = models.CharField(max_length=150, verbose_name='Мышь s/n', blank=True)
+    executor = models.ForeignKey(Executor, on_delete=models.PROTECT, related_name='computers_executor',
+                                  verbose_name='Исполнитель', null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Компьютер"
+        verbose_name_plural = "018_Компьютеры"
