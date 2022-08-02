@@ -813,6 +813,7 @@ class ProgramItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
     program_login = models.CharField(max_length=150, verbose_name='Логин', blank=True)
     program_password = models.CharField(max_length=150, verbose_name='Пароль', blank=True)
+    program_email = models.EmailField(verbose_name='Почта для аккаунта', blank=True)
     program_license = models.TextField(verbose_name='Лицензия', blank=True)
     activation_date = models.DateField(verbose_name='Дата активации', null=True, blank=True)
     activation_for = models.DateField(verbose_name='Дата окончания подписки', null=True, blank=True)
@@ -821,6 +822,8 @@ class ProgramItem(models.Model):
     program_cost = models.DecimalField(default=0, max_digits=8, decimal_places=0, verbose_name='Стоимость,₽',
                                          blank=True)
     computers = models.ManyToManyField('Computers', related_name='program_computers', verbose_name='Компьютеры', blank=True)
+    program_url = models.URLField(verbose_name='Ссылка на сервис', blank=True)
+    is_active = models.BooleanField(verbose_name='Активно')
 
     def __str__(self):
         return self.title

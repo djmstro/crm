@@ -403,7 +403,7 @@ class EquipmentLocationAdmin(admin.ModelAdmin):
 class EquipmentAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        'id', 'get_photo', 'brand', 'model', 'equipment_description', 'additional', 'comment', 'owner_office',
+        'id', 'get_photo', 'brand', 'model', 'equipment_description', 'additional', 'count', 'comment', 'owner_office',
         'owner_executor',
         'sn', 'link',
         'equipment_location', 'defect')
@@ -551,7 +551,7 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
 class ProgramItemAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        'id', 'title', 'program_login', 'program_password', 'get_computers', 'program_license', 'activation_date', 'activation_for', 'subscription_plan', 'program_cost')
+        'id', 'title', 'program_login', 'program_email', 'program_password', 'get_computers', 'program_license', 'activation_date', 'activation_for', 'subscription_plan', 'program_cost', 'program_url', 'is_active')
     list_display_links = ('id', 'title')
     search_fields = ['title']
     readonly_fields = ['created_at']
