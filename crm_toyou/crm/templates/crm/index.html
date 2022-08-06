@@ -69,176 +69,42 @@
                 </div>
                 <!--Проекты-->
                 <div class="row">
+                    {% for item in projects %}
                     <div class="col-3 col-xl-6 col-md-6 col-sm-12">
                         <div class="box left-dot">
                             <div class="box-body">
                                 <div class="row">
                                     <div class="col-12 mb-10">
                                         <div class="mt-0 text-start"><a href="project-details.html"
-                                                                        class="box-title mb-0 mt-1 mb-3 font-w600 fs-18">Свадьба
-                                            Шпильки</a>
-                                            <p class="fs-14 font-w500 text-muted mb-6">Дедлайн: 21.07.2022</p>
-                                            <span class="fs-13  mt-2 text-muted">Краткое ТЗ</span>
+                                                                        class="box-title mb-0 mt-1 mb-3 font-w600 fs-18">{{
+                                            item.title }}</a>
+                                            <p class="fs-14 font-w500 text-muted mb-6">Дедлайн: {{ item.project_deadline
+                                                }}</p>
+                                            <span class="fs-13  mt-2 text-muted">{{ item.status_project }}</span>
                                         </div>
-                                        <img src="{% static 'images/avatar/user-1.png' %}" alt="user" class="img-box">
                                     </div>
                                 </div>
                             </div>
                             <div class="box-footer">
                                 <div class="d-flex align-items-center">
                                     <div class="d-flex mb-3 mb-md-0">
-                                        <ul class="user-list mb-0">
-                                            <li><img src="{% static 'images/avatar/user-1.png' %}" alt="user"></li>
-                                            <li><img src="{% static 'images/avatar/user-2.png' %}" alt="user"></li>
-                                            <li><img src="{% static 'images/avatar/user-3.png' %}" alt="user"></li>
+                                        <ul class="user-list mr-15">
+                                            <li><img src="{{ item.custumer.custumer_photo.url }}" alt="Заказчик"></li>
                                         </ul>
-
-                                    </div>
-                                    <div class="ms-auto mt-3 mt-sm-0">
-                                        <div class="d-flex">
-                                            <div class="task-btn bg-yellow-1 text-yellow-1 fs-14"
-                                                 data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                                 data-bs-original-title="Project Priority">Юля Шпилька
-                                            </div>
+                                        <div class="task-btn bg-yellow-1 text-yellow-1 fs-14"
+                                             data-bs-original-title="Заказчик">{{ item.custumer }}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-3 col-xl-6 col-md-6 col-sm-12">
-                        <div class="box left-dot">
-                            <div class="box-body">
-                                <div class="row">
-                                    <div class="col-12 mb-10">
-                                        <div class="mt-0 text-start"><a href="project-details.html"
-                                                                        class="box-title mb-0 mt-1 mb-3 font-w600 fs-18">Свадьба
-                                            Шпильки</a>
-                                            <p class="fs-14 font-w500 text-muted mb-6">Дедлайн: 21.07.2022</p>
-                                            <span class="fs-13  mt-2 text-muted">Краткое ТЗ</span>
-                                        </div>
-                                        <img src="{% static 'images/avatar/user-1.png' %}" alt="user" class="img-box">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="box-footer">
-                                <div class="d-flex align-items-center">
-                                    <div class="d-flex mb-3 mb-md-0">
-                                        <ul class="user-list mb-0">
-                                            <li><img src="{% static 'images/avatar/user-1.png' %}" alt="user"></li>
-                                            <li><img src="{% static 'images/avatar/user-2.png' %}" alt="user"></li>
-                                            <li><img src="{% static 'images/avatar/user-3.png' %}" alt="user"></li>
-                                        </ul>
-
-                                    </div>
-                                    <div class="ms-auto mt-3 mt-sm-0">
-                                        <div class="d-flex">
-                                            <div class="task-btn bg-yellow-1 text-yellow-1 fs-14"
-                                                 data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                                 data-bs-original-title="Project Priority">Юля Шпилька
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3 col-xl-6 col-md-6 col-sm-12">
-                        <div class="box left-dot">
-                            <div class="box-body">
-                                <div class="row">
-                                    <div class="col-12 mb-10">
-                                        <div class="mt-0 text-start"><a href="project-details.html"
-                                                                        class="box-title mb-0 mt-1 mb-3 font-w600 fs-18">Свадьба
-                                            Шпильки</a>
-                                            <p class="fs-14 font-w500 text-muted mb-6">Дедлайн: 21.07.2022</p>
-                                            <span class="fs-13  mt-2 text-muted">Краткое ТЗ</span>
-                                        </div>
-                                        <img src="{% static 'images/avatar/user-1.png' %}" alt="user" class="img-box">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="box-footer">
-                                <div class="d-flex align-items-center">
-                                    <div class="d-flex mb-3 mb-md-0">
-                                        <ul class="user-list mb-0">
-                                            <li><img src="{% static 'images/avatar/user-1.png' %}" alt="user"></li>
-                                            <li><img src="{% static 'images/avatar/user-2.png' %}" alt="user"></li>
-                                            <li><img src="{% static 'images/avatar/user-3.png' %}" alt="user"></li>
-                                        </ul>
-
-                                    </div>
-                                    <div class="ms-auto mt-3 mt-sm-0">
-                                        <div class="d-flex">
-                                            <div class="task-btn bg-yellow-1 text-yellow-1 fs-14"
-                                                 data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                                 data-bs-original-title="Project Priority">Юля Шпилька
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3 col-xl-6 col-md-6 col-sm-12">
-                        <div class="box left-dot">
-                            <div class="box-body">
-                                <div class="row">
-                                    <div class="col-12 mb-10">
-                                        <div class="mt-0 text-start"><a href="project-details.html"
-                                                                        class="box-title mb-0 mt-1 mb-3 font-w600 fs-18">Свадьба
-                                            Шпильки</a>
-                                            <p class="fs-14 font-w500 text-muted mb-6">Дедлайн: 21.07.2022</p>
-                                            <span class="fs-13  mt-2 text-muted">Краткое ТЗ</span>
-                                        </div>
-                                        <img src="{% static 'images/avatar/user-1.png' %}" alt="user" class="img-box">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="box-footer">
-                                <div class="d-flex align-items-center">
-                                    <div class="d-flex mb-3 mb-md-0">
-                                        <ul class="user-list mb-0">
-                                            <li><img src="{% static 'images/avatar/user-1.png' %}" alt="user"></li>
-                                            <li><img src="{% static 'images/avatar/user-2.png' %}" alt="user"></li>
-                                            <li><img src="{% static 'images/avatar/user-3.png' %}" alt="user"></li>
-                                        </ul>
-
-                                    </div>
-                                    <div class="ms-auto mt-3 mt-sm-0">
-                                        <div class="d-flex">
-                                            <div class="task-btn bg-yellow-1 text-yellow-1 fs-14"
-                                                 data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                                 data-bs-original-title="Project Priority">Юля Шпилька
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
                 <!--/Проекты-->
             </div>
         </div>
         <!--Конец цикла-->
-
-<!--Календарь-->
-        <div class="row">
-            <div class="col-4 col-md-12">
-                <div class="box">
-                    <div class="box-header  pt-0">
-                        <div class="me-auto">
-                            <h4 class="card-title mb-0 fs-22">Календарь</h4>
-                        </div>
-                    </div>
-                    <div class="box-body pb-0">
-                        <div class="custom-calendar"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-<!--/Календарь-->
 
     </div>
 </div>
