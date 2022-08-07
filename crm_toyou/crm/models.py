@@ -640,7 +640,7 @@ class Equipment(models.Model):
         return self.model
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-created_at']
         verbose_name = "Оборудование"
         verbose_name_plural = "006_Оборудование"
 
